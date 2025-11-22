@@ -1,7 +1,5 @@
 # Twia.StateMachine
 
-[[_TOC_]]
-
 A generator of state machines for C# applications.
 
 ## Overview
@@ -50,9 +48,7 @@ When the `Run` method is called, it will transition to the `Running` state, exec
 
 After one hour in the `Running` state, it will automatically transition back to the `Stopped` state, executing the `_engine.Stop()` method on entry if the engine is running.
 
-When the `Stop` method is called, it will transition back to the `Stopped` state, executing the `_engine.Stop()` method on entry if the engine is running.
-
-When the `Exit` method is called from either the `Stopped` or `Running` states, it will transition to the `Final` state, which is a terminal state.
+When the `Stop` method is called, it will transition to the `Stopped` state, executing the `_engine.Stop()` method on entry if the engine is running.
 
 To use the above state machine:
 
@@ -71,8 +67,6 @@ if(stateMachine.CurrentState == MyStateMachine.State.Running)
     stateMachine.Stop();
 }
 ```
-
-## Features
 
 ## Attributes
 
