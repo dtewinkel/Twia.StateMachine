@@ -58,22 +58,19 @@ internal class IncrementalGeneratorVerifier<TGenerator> : CSharpSourceGeneratorT
         _generatedSourcesPrefix = generatedSourcesPrefix;
         _generatedSourcesSuffix = generatedSourcesSuffix;
         _compilerDiagnostics = compilerDiagnostics;
+        var majorMinor = "10.0";
 #if NET9_0
+        majorMinor = "9.0";
+#endif
+#if NET8_0
+        majorMinor = "8.0";
+#endif
         TestState.ReferenceAssemblies = new ReferenceAssemblies(
-            "net9.0",
+            $"net{majorMinor}",
             new PackageIdentity(
                 "Microsoft.NETCore.App.Ref",
-                "9.0.0"),
-            Path.Combine("ref", "net9.0"));
-#endif
-#if NET10_0
-        TestState.ReferenceAssemblies = new ReferenceAssemblies(
-            "net10.0",
-            new PackageIdentity(
-                "Microsoft.NETCore.App.Ref",
-                "10.0.0"),
-            Path.Combine("ref", "net10.0"));
-#endif
+                $"{majorMinor}.0"),
+            Path.Combine("ref", $"net{majorMinor}"));
     }
 
     public void AddAdditionalFileReferences(params IEnumerable<string> filePaths)

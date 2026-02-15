@@ -24,14 +24,22 @@
     <Product>$(SolutionName)</Product>
     <Description>Attributes and code generator needed to generate a fully functional state machine in C#.</Description>
     <PackageProjectUrl>https://github.com/dtewinkel/Twia.StateMachine</PackageProjectUrl>
+    <AssemblyVersion>0.0.1</AssemblyVersion>
+    <FileVersion>0.0.1.0</FileVersion>
+    <Version>0.0.1-local</Version>
+    <InformationalVersion>0.0.1.0 local build</InformationalVersion>
     <RepositoryUrl>https://github.com/dtewinkel/Twia.StateMachine.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>state machine code generator generation</PackageTags>
+    <PackageTags>state machine trigger transition code generator generation</PackageTags>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
     <Copyright>Copyright TWIA 2025-2026</Copyright>
     <PackageId>Twia.StateMachine</PackageId>
     <ApplicationIcon>images/twia-logo.ico</ApplicationIcon>
     <PackageIcon>twia-logo-128.png</PackageIcon>
+    <PackageReleaseNotes>
+      Edit the release notes in ReleaseNotes.txt.
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,12 +51,23 @@
     <ProjectReference Include="../Twia.StateMachine/Twia.StateMachine.csproj" PrivateAssets="All" />
   </ItemGroup>
 
+
+  <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <PackageReleaseNotes>
+        $([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/ReleaseNotes.txt"))
+      </PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+
   <ItemGroup>
     <None Include="$(OutputPath)/$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(OutputPath)/Twia.StateMachine.dll" Pack="true" PackagePath="lib/netstandard2.0" Visible="true" />
     <None Include="$(OutputPath)/Twia.StateMachine.xml" Pack="true" PackagePath="lib/netstandard2.0" Visible="true" />
     <None Include="images/twia-logo-128.png" Pack="true" PackagePath="/" Visible="true" />
     <None Include="../../LICENSE.md" Pack ="true" PackagePath="/" Link="LICENSE.md"/>
+    <None Include="../../README.md" Pack ="true" PackagePath="/" Link="README.md"/>
+    <None Include="../../documentation/media/generated/StateMachine.png" Pack ="true" PackagePath="/documentation/media/generated"/>
   </ItemGroup>
 
 </Project>

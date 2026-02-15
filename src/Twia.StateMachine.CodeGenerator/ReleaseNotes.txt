@@ -1,0 +1,5 @@
+1.0.0:
+
+  Initial Version.
+
+  - ADD: Initial implementation of the code generator for state machines.

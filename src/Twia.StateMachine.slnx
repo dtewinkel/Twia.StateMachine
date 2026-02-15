@@ -1,10 +1,8 @@
 <Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-  </Configurations>
   <Folder Name="/Solution Items/">
     <File Path="../README.md" />
     <File Path="../LICENSE.md" />
+    <File Path="global.json" />
   </Folder>
   <Project Path="Twia.StateMachine.CodeGenerator.UnitTests/Twia.StateMachine.CodeGenerator.UnitTests.csproj" />
   <Project Path="Twia.StateMachine.CodeGenerator/Twia.StateMachine.CodeGenerator.csproj" />
