@@ -8,7 +8,7 @@ Generates state machines based on attributes applied to a class and methods of t
 
 The following UML state machine diagram:
 
-![Simple state machine](media/generated/StateMachine.png)
+![Simple state machine](https://raw.githubusercontent.com/dtewinkel/Twia.StateMachine/refs/heads/main/documentation/media/generated/StateMachine.png)
 
 Can be defined in code as:
 

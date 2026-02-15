@@ -65,9 +65,8 @@
     <None Include="$(OutputPath)/Twia.StateMachine.dll" Pack="true" PackagePath="lib/netstandard2.0" Visible="true" />
     <None Include="$(OutputPath)/Twia.StateMachine.xml" Pack="true" PackagePath="lib/netstandard2.0" Visible="true" />
     <None Include="images/twia-logo-128.png" Pack="true" PackagePath="/" Visible="true" />
-    <None Include="../../LICENSE.md" Pack ="true" PackagePath="/" Link="LICENSE.md"/>
-    <None Include="../../README.md" Pack ="true" PackagePath="/" Link="README.md"/>
-    <None Include="../../documentation/media/generated/StateMachine.png" Pack ="true" PackagePath="/documentation/media/generated"/>
+    <None Include="../../LICENSE.md" Pack="true" PackagePath="/" Link="LICENSE.md" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" Link="README.md" />
   </ItemGroup>
 
 </Project>
