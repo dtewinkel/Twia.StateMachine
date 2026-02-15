@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../README.md" />
+    <File Path="../LICENSE.md" />
+  </Folder>
+  <Project Path="Twia.StateMachine.CodeGenerator.UnitTests/Twia.StateMachine.CodeGenerator.UnitTests.csproj" />
+  <Project Path="Twia.StateMachine.CodeGenerator/Twia.StateMachine.CodeGenerator.csproj" />
+  <Project Path="Twia.StateMachine.Example/Twia.StateMachine.Example.csproj" />
+  <Project Path="Twia.StateMachine.IntegrationTests/Twia.StateMachine.IntegrationTests.csproj" />
+  <Project Path="Twia.StateMachine/Twia.StateMachine.csproj" />
+</Solution>

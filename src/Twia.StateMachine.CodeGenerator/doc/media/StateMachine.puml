@@ -1,0 +1,10 @@
+@startuml
+
+[*] --> Stopped
+Stopped --> Running : Run
+Running --> Stopped : Stop
+Running --> Stopped : after(1 hour)
+Running : entry / _engine.Start()
+Running : exit / _engine.Stop()
+
+@enduml

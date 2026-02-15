@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>1701;1702;IDE0290</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsPackable>true</IsPackable>
+    <Deterministic>True</Deterministic>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <enforceExtendedAnalyzerRules>enable</enforceExtendedAnalyzerRules>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>TWIA State Machine Generator</Title>
+    <Authors>TWIA / Daniël te Winkel</Authors>
+    <Product>$(SolutionName)</Product>
+    <Description>Attributes and code generator needed to generate a fully functional state machine in C#.</Description>
+    <PackageProjectUrl>https://github.com/dtewinkel/Twia.StateMachine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dtewinkel/Twia.StateMachine.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>state machine code generator generation</PackageTags>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <Copyright>Copyright TWIA 2025-2026</Copyright>
+    <PackageId>Twia.StateMachine</PackageId>
+    <ApplicationIcon>images/twia-logo.ico</ApplicationIcon>
+    <PackageIcon>twia-logo-128.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Twia.StateMachine/Twia.StateMachine.csproj" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)/$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(OutputPath)/Twia.StateMachine.dll" Pack="true" PackagePath="lib/netstandard2.0" Visible="true" />
+    <None Include="$(OutputPath)/Twia.StateMachine.xml" Pack="true" PackagePath="lib/netstandard2.0" Visible="true" />
+    <None Include="images/twia-logo-128.png" Pack="true" PackagePath="/" Visible="true" />
+    <None Include="../../LICENSE.md" Pack ="true" PackagePath="/" Link="LICENSE.md"/>
+  </ItemGroup>
+
+</Project>

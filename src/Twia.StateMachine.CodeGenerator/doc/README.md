@@ -1,6 +1,6 @@
 # Twia.StateMachine
 
-A generator of simple state machines, defined by attributes and conventions, for C# applications.
+A generator of state machines for C# applications.
 
 ## Overview
 
@@ -8,7 +8,7 @@ Generates state machines based on attributes applied to a class and methods of t
 
 The following UML state machine diagram:
 
-![Simple state machine](documentation/media/generated/StateMachine.png)
+![Simple state machine](media/generated/StateMachine.png)
 
 Can be defined in code as:
 
@@ -68,15 +68,7 @@ if(stateMachine.CurrentState == MyStateMachine.State.Running)
 }
 ```
 
-## Getting started
-
-1. Install the 'Twia.Statemachine' package from NuGet.
-2. Create a state machine class with its triggers, states and transitions.
-3. Use the state machine.
-
 ## Attributes
-
-A number of attributes are available to define the state machine.
 
 ### The state machine class
 
@@ -95,18 +87,7 @@ A state machine class can be embedded in another class.
 
 ### Triggers
 
-Triggers may initiate a transition from one state to another.
-
-A trigger is represented by a method. This method must be marked with the `TriggerAttribute` attribute.
-
-To send the trigger the method must be invoked.
-
-These methods must:
-
-- be declared as `partial`
-- have no implementation
-- have a `void` return type
-- have no parameters
+Methods that represent triggers must be marked with the `TriggerAttribute` attribute. These methods must be declared as `partial` and have no implementation.
 
 ```csharp
 [StateMachine]
@@ -120,12 +101,7 @@ public partial class MyStateMachine
 ### States
 
 Methods that represent states must be marked with the `StateAttribute` attribute.
-
-These methods must:
-
-- be declared as `partial`
-- and have no implementation
-- preferably be private, as they should not be called by users of the state machine
+These methods must be declared as `partial` and have no implementation. Preferably, these methods should be private, as they should not be called by users of the state machine.
 
 ```csharp
 [StateMachine]
@@ -136,7 +112,7 @@ public partial class MyStateMachine
 }
 ```
 
-Exactly one of the states must be marked with the `InitialStateAttribute` attribute to indicate the starting state of the state machine. The method must follow the same rules as methods marked with the `StateAttribute`.
+Exactly one of the states must be marked with the `InitialStateAttribute` attribute to indicate the starting state of the state machine.
 
 ```csharp
 [StateMachine]
