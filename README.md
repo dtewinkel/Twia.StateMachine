@@ -70,7 +70,7 @@ if(stateMachine.CurrentState == MyStateMachine.State.Running)
 
 ## Getting started
 
-1. Install the 'Twia.Statemachine' package from NuGet.
+1. Install the 'Twia.StateMachine' package from NuGet.
 2. Create a state machine class with its triggers, states and transitions.
 3. Use the state machine.
 

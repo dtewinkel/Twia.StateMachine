@@ -1,4 +1,4 @@
-@startuml
+@startuml Simple State Machine example
 
 [*] --> Stopped
 Stopped --> Running : Run

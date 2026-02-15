@@ -48,7 +48,7 @@ they can license or become able to license.
 You may not use the names "TWIA", "Daniël te Winkel", or
 related trademarks to distribute modified versions of
 this software, unless you have explicit permission to do
-so. 
+so.
 
 ## Reliability
 
