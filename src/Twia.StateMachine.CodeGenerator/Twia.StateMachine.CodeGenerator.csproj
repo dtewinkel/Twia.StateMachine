@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Twia.StateMachine/Twia.StateMachine.csproj" PrivateAssets="All" />
+    <ProjectReference Include="../Twia.StateMachine/Twia.StateMachine.csproj" PrivateAssets="All" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
 

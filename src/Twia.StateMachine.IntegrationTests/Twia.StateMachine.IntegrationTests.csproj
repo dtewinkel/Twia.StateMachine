@@ -19,11 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Twia.StateMachine\Twia.StateMachine.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Twia.StateMachine.CodeGenerator\Twia.StateMachine.CodeGenerator.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Twia.StateMachine\Twia.StateMachine.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Twia.StateMachine.CodeGenerator\Twia.StateMachine.CodeGenerator.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
   <ItemGroup>

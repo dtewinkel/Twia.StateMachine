@@ -36,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Twia.StateMachine.CodeGenerator\Twia.StateMachine.CodeGenerator.csproj" SetTargetFramework="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\Twia.StateMachine\Twia.StateMachine.csproj" />
+    <ProjectReference Include="..\Twia.StateMachine.CodeGenerator\Twia.StateMachine.CodeGenerator.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Twia.StateMachine\Twia.StateMachine.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
   <ItemGroup>
