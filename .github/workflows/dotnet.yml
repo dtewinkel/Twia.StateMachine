@@ -34,6 +34,8 @@ jobs:
 
       - name: Create Tag
         run: |
+          git config --global user.email "github_build@twia.nl"
+          git config --global user.name "Build Bot"
           git tag -a -f v${{ steps.gitversion.outputs.SemVer }} -m "Tag version v${{ steps.gitversion.outputs.SemVer }}"
           git push origin v${{ steps.gitversion.outputs.SemVer }}
 
