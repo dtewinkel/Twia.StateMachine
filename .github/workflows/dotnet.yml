@@ -9,6 +9,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      Solution: Twia.StateMachine.slnx
+      Configuration: Release
+    defaults:
+      run:
+        working-directory: src
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,22 +45,26 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+          dotnet-version: 10.0.x
 
       - name: Restore
-        run: dotnet restore Twia.StateMachine.slnx
-        working-directory: src
+        run: dotnet restore $Solution
 
       - name: Build
-        run: dotnet build Twia.StateMachine.slnx --configuration Release --no-restore
-        working-directory: src
+        run: >-
+          dotnet build $Solution 
+          --configuration $Configuration 
+          --no-restore
+          -p:Version=${{ steps.gitversion.outputs.SemVer }}
+          -p:PackageVersion=${{ steps.gitversion.outputs.SemVer }}
+          -p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }}
+          -p:FileVersion=${{ steps.gitversion.outputs.FileSemVer }}
+
+      - name: Test
+        run: dotnet test --solution $Solution --configuration $Configuration --no-build
 
       - name: Upload NuGet packages
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
           path: src/Twia.StateMachine.CodeGenerator/bin/Release/*.nupkg
-
-      - name: Test
-        run: dotnet test --solution Twia.StateMachine.slnx --configuration Release --no-build
-        working-directory: src
