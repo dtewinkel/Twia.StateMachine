@@ -25,8 +25,12 @@ jobs:
         uses: gittools/actions/gitversion/execute@v4.3.1
         with:
           useConfigFile: false
+          overrideConfig: |
+            next-version=0.1.0
 
       - name: Create Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           git tag v${{ steps.gitversion.outputs.SemVer }}
           git push origin v${{ steps.gitversion.outputs.SemVer }}
