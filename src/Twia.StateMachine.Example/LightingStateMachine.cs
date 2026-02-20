@@ -2,7 +2,7 @@
 
 [StateMachine]
 public partial class LightingStateMachine
-{   
+{
     private readonly ILightSwitch _lightSwitch;
     private readonly ILightSensor _lightSensor;
 

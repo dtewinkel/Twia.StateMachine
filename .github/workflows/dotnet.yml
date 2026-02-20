@@ -59,6 +59,7 @@ jobs:
           -p:PackageVersion=${{ steps.gitversion.outputs.SemVer }}
           -p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }}
           -p:FileVersion=${{ steps.gitversion.outputs.FileSemVer }}
+          -p:InformationalVersion=${{ steps.gitversion.outputs.SemVer }}
 
       - name: Test
         run: dotnet test --solution $Solution --configuration $Configuration --no-build

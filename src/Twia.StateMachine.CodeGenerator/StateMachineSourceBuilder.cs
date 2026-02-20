@@ -25,10 +25,10 @@ public class StateMachineSourceBuilder
     public StateMachineSourceBuilder()
     {
         var assembly = typeof(StateMachineIncrementalCodeGenerator).Assembly;
-        var versionAttribute = assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
-            .OfType<System.Reflection.AssemblyInformationalVersionAttribute>()
+        var versionAttribute = assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyVersionAttribute), false)
+            .OfType<System.Reflection.AssemblyVersionAttribute>()
             .FirstOrDefault();
-        _generatorVersion = versionAttribute?.InformationalVersion ?? "Unknown";
+        _generatorVersion = versionAttribute?.Version ?? "Unknown";
         _generatorName = assembly.GetName().Name ?? "Unknown";
     }
 

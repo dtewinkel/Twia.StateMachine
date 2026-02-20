@@ -6,15 +6,12 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <EnableMSTestRunner>true</EnableMSTestRunner>
   </PropertyGroup>
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);CA1707</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <EnableMSTestRunner>true</EnableMSTestRunner>
   </PropertyGroup>
 
   <ItemGroup>

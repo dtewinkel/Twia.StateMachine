@@ -6,6 +6,7 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <EnableMSTestRunner>true</EnableMSTestRunner>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,10 +14,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="MSTest" Version="4.1.0" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <EnableMSTestRunner>true</EnableMSTestRunner>
-  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Twia.StateMachine\Twia.StateMachine.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
@@ -26,5 +23,5 @@
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
-  
+
 </Project>
