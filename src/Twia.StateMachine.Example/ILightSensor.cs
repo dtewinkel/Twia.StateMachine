@@ -1,6 +1,6 @@
 ﻿namespace Twia.StateMachine.Example;
 
-public interface ILichtSensor
+public interface ILightSensor
 {
     Decimal SensorValue { get; }
 }
