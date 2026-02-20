@@ -47,11 +47,12 @@ jobs:
         run: dotnet build src/Twia.StateMachine.slnx --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test src/Twia.StateMachine.slnx --configuration Release --no-build --verbosity normal || true
+        run: dotnet test --solution src/Twia.StateMachine.slnx --configuration Release --no-build
+        working-directory: src
 
       - name: Pack NuGet packages
         run: |
-          dotnet pack src/Twia.StateMachine.slnx --configuration Release --no-build -o ./artifacts /p:PackageVersion=${{ steps.gitversion.outputs.NuGetVersionV2 }} /p:Version=${{ steps.gitversion.outputs.SemVer }}
+          dotnet pack src/Twia.StateMachine.slnx --configuration Release --no-build -o ./artifacts -p:PackageVersion=${{ steps.gitversion.outputs.NuGetVersionV2 }} -p:Version=${{ steps.gitversion.outputs.SemVer }}
 
       - name: Upload NuGet packages
         uses: actions/upload-artifact@v4
