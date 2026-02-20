@@ -8,6 +8,7 @@
     <NoWarn>1701;1702;IDE0290</NoWarn>
 
     <IsPackable>false</IsPackable>
+    <PackageId>Twia.StateMachine.Attributes</PackageId>
     <Title>TWIA State Machine</Title>
     <Authors>TWIA / Daniël te Winkel</Authors>
     <Product>$(SolutionName)</Product>
