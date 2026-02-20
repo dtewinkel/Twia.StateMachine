@@ -29,8 +29,7 @@ jobs:
             next-version=0.1.0
 
       - name: Create Tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+        uses: actions/checkout@v4
         run: |
           git tag v${{ steps.gitversion.outputs.SemVer }}
           git push origin v${{ steps.gitversion.outputs.SemVer }}
