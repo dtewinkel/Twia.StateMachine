@@ -8,6 +8,10 @@ on:
 
 jobs:
   build:
+    permissions:
+      id-token: write
+      contents: read
+      repository-projects: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,9 +33,8 @@ jobs:
             next-version=0.1.0
 
       - name: Create Tag
-        uses: actions/checkout@v4
         run: |
-          git tag v${{ steps.gitversion.outputs.SemVer }}
+          git tag -a -f v${{ steps.gitversion.outputs.SemVer }} -m "Tag version v${{ steps.gitversion.outputs.SemVer }}"
           git push origin v${{ steps.gitversion.outputs.SemVer }}
 
       - name: Setup .NET
