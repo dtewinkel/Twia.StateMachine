@@ -32,7 +32,7 @@ jobs:
         with:
           useConfigFile: false
           overrideConfig: |
-            next-version=0.1.0
+            next-version=1.0.0
 
       - name: Create Tag
         if: github.ref == 'refs/heads/main'

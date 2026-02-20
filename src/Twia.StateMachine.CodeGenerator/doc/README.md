@@ -31,7 +31,7 @@ public partial class MyStateMachine
     [OnEntry("_engine.Run()")]
     [OnExit("_engine.Stop()")]
     [Transition(nameof(Stop), nameof(Stopped))]
-    [TransitionAfter("PT01:00:00", nameof(Stopped))]
+    [TransitionAfter("1:00:00", nameof(Stopped))]
     private partial void Running();
 
     [Trigger]
@@ -191,7 +191,7 @@ public partial class MyStateMachine
     [OnEntry("_engine.Run()")]
     [OnExit("_engine.Stop()")]
     [Transition(nameof(Stop), nameof(Stopped))]
-    [TransitionAfter("PT01:00:00", nameof(Stopped))]
+    [TransitionAfter("1:00:00", nameof(Stopped))]
     private partial void Running();
  }
 ```
