@@ -18,12 +18,14 @@ public static class StateMachineValidator
         var methodsAreStateOrTrigger = MethodsAreStateOrTrigger(context, declaration);
         var methodsSignaturesAreCorrect = MethodsSignaturesAreCorrect(context, declaration);
         var triggerNamesAreCorrect = TriggerNamesAreCorrect(context, declaration);
+        var afterTimeSpansAreCorrect = AfterTimeSpansAreCorrect(context, declaration);
         var stateNamesAreCorrectNamesAreCorrect = StateNamesAreCorrect(context, declaration);
         return declarationIsPartial 
                && initialStateIsValid 
                && methodsAreStateOrTrigger 
                && methodsSignaturesAreCorrect
                && triggerNamesAreCorrect
+               && afterTimeSpansAreCorrect
                && stateNamesAreCorrectNamesAreCorrect;
     }
 
@@ -71,6 +73,29 @@ public static class StateMachineValidator
                 if (!triggerNames.Contains(trigger))
                 {
                     context.ReportDiagnostic(StateMachineGeneratorDiagnostics.TriggerMustBeDefined((MethodDeclarationSyntax)state.Node, trigger));
+                    success = false;
+                }
+            }
+        }
+
+        return success;
+    }
+
+    private static bool AfterTimeSpansAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
+    {
+        var states = declaration.Methods.Where(method => method.IsState);
+        var success = true;
+        foreach (var state in states)
+        {
+            var transitions =
+                state.Transitions.Where(transition => transition.TransitionType == TransitionType.AfterDelay);
+            foreach (var transitionDeclaration in transitions)
+            {
+                var trigger = transitionDeclaration.Trigger;
+                
+                if (!TimeSpan.TryParse(trigger, out _))
+                {
+                    context.ReportDiagnostic(StateMachineGeneratorDiagnostics.TimeSpanMustBeValid((MethodDeclarationSyntax)state.Node, trigger));
                     success = false;
                 }
             }

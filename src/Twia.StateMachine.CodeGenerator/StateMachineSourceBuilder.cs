@@ -18,6 +18,7 @@ public class StateMachineSourceBuilder
     private string PrivateMemberPrefix => $"__{_stateMachineName}_{RandomIdInPrefix}_";
     private string TriggerEnumTypeName => $"{PrivateMemberPrefix}Trigger";
     private string CurrentStateBackingFieldName => $"{PrivateMemberPrefix}CurrentStateBacking";
+    private string TimersBackingFieldName => $"{PrivateMemberPrefix}Timers";
 
     private string _lastTriggerFieldName = "<undefined>";
 
@@ -37,6 +38,11 @@ public class StateMachineSourceBuilder
         var states = declaration.Methods.Where(method => method.IsState).ToArray();
         var initialState = states.FirstOrDefault(state => state.IsInitial);
         var triggers = declaration.Methods.Where(method => method.IsTrigger).ToArray();
+        var afterTriggers = states
+            .SelectMany(state =>
+                state.Transitions.Where(transition => transition.TransitionType == TransitionType.AfterDelay)).ToList();
+        var hasTimers = afterTriggers.Count > 0;
+
         _stateMachineName = declaration.Name;
 
         var nestingLevel = 0;
@@ -70,7 +76,8 @@ public class StateMachineSourceBuilder
             nestingLevel++;
         }
 
-        document.WriteLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{_generatorName}\", \"{_generatorVersion}\")]");
+        document.WriteLine(
+            $"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{_generatorName}\", \"{_generatorVersion}\")]");
         document.WriteLine($"{declaration.Modifiers} class {declaration.Name}");
         document.WriteLineBlockOpen();
 
@@ -82,12 +89,22 @@ public class StateMachineSourceBuilder
         document.WriteLineNoTabs();
         CreateCurrentStateProperty(document);
 
+        if (hasTimers)
+        {
+            document.WriteLineNoTabs();
+            CreateTimersProperty(document);
+        }
+
         document.WriteLineNoTabs();
 
-        CreateInitializeMethod(document, initialState);
-        WriteTriggerMethods(document, triggers, states);
+        WriteInitializeMethod(document, initialState);
+        if (hasTimers)
+        {
+            WriteStartTimersMethod(document);
+        }
+        WriteTriggerMethods(document, triggers, states, hasTimers);
         WriteStateMethods(document, states);
-        
+
         document.WriteLineBlockClose();
 
         while (nestingLevel > 0)
@@ -102,7 +119,7 @@ public class StateMachineSourceBuilder
         context.AddSource(hintName, SourceText.From(writer.ToString(), Encoding.UTF8));
     }
 
-    private void CreateInitializeMethod(IndentedTextWriter document, MethodDeclaration? initialState)
+    private void WriteInitializeMethod(IndentedTextWriter document, MethodDeclaration? initialState)
     {
         document.WriteLine("/// <summary>");
         document.WriteLine("/// Initialize the state machine before it is used.");
@@ -138,6 +155,27 @@ public class StateMachineSourceBuilder
         document.WriteLineBlockClose();
     }
 
+    private void WriteStartTimersMethod(IndentedTextWriter document)
+    {
+        var timerCallback = $"{PrivateMemberPrefix}TimerCallback";
+
+        document.WriteLineNoTabs();
+        document.WriteLine($"private void {PrivateMemberPrefix}StartTimer(string period, {TriggerEnumTypeName} trigger)");
+        document.WriteLineBlockOpen();
+        document.WriteLine("if (global::System.TimeSpan.TryParse(period, out var timeSpan))");
+        document.WriteLineBlockOpen();
+        document.WriteLine("var milliSeconds = global::System.Convert.ToInt32(timeSpan.TotalMilliseconds);");
+        document.WriteLine($"var timer = new global::System.Threading.Timer({timerCallback}, trigger, milliSeconds, global::System.Threading.Timeout.Infinite);");
+        document.WriteLine($"{TimersBackingFieldName}.Add(timer);");
+        document.WriteLineBlockClose();
+        document.WriteLineBlockClose();
+        document.WriteLineNoTabs();
+        document.WriteLine($"private void {timerCallback}(object? state)");
+        document.WriteLineBlockOpen();
+        document.WriteLine($"{PrivateMemberPrefix}InvokeTrigger(({TriggerEnumTypeName})state!);");
+        document.WriteLineBlockClose();
+    }
+
     private void GenerateHeader(IndentedTextWriter document)
     {
         var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
@@ -149,10 +187,10 @@ public class StateMachineSourceBuilder
 
     private void CreateTriggersEnum(IndentedTextWriter document, MethodDeclaration[] triggers, MethodDeclaration[] states)
     {
-        var afterStates = states
-            .Where(state => state.Transitions.Any(transition => transition.TransitionType == TransitionType.AfterDelay))
-            .GroupBy(state => state.Name).ToList();
-        var hasAfterStates = afterStates.Count > 0;
+        var afterTriggers = states
+            .SelectMany(state =>
+                state.Transitions.Where(transition => transition.TransitionType == TransitionType.AfterDelay)).ToList();
+        var hasAfterTriggers = afterTriggers.Count > 0;
         document.WriteLine($"private enum {TriggerEnumTypeName}");
         document.WriteLineBlockOpen();
         document.WriteLine("// Undefined value.");
@@ -160,18 +198,13 @@ public class StateMachineSourceBuilder
         document.WriteLine("// User defined triggers.");
         AddEnumMembers(document, [.. triggers.Select(trigger => trigger.Name)], moreToFollow: true);
         document.WriteLine("// System defined triggers.");
-        AddEnumMembers(document, [$"{PrivateMemberPrefix}Entry"], moreToFollow: hasAfterStates);
-        if (hasAfterStates)
+        AddEnumMembers(document, [$"{PrivateMemberPrefix}Entry"], moreToFollow: hasAfterTriggers);
+        if (hasAfterTriggers)
         {
             List<string> afterTriggerNames = [];
-            foreach (var afterState in afterStates)
+            foreach (var afterTrigger in afterTriggers)
             {
-                var index = 1;
-                foreach (var _ in afterState.ToList())
-                {
-                    afterTriggerNames.Add($"{PrivateMemberPrefix}{afterState.Key}After{index}");
-                    index++;
-                }
+                    afterTriggerNames.Add($"{PrivateMemberPrefix}{afterTrigger.Name}");
             }
             AddEnumMembers(document, afterTriggerNames);
         }
@@ -232,7 +265,7 @@ public class StateMachineSourceBuilder
         document.WriteLineBlockOpen();
         document.WriteLine($"{PrivateMemberPrefix}AssertIsInitialized();");
         document.WriteLineNoTabs();
-        document.WriteLine($"return {CurrentStateBackingFieldName};");    
+        document.WriteLine($"return {CurrentStateBackingFieldName};");
         document.WriteLineBlockClose();
         document.WriteLineNoTabs();
         document.WriteLine("private set");
@@ -242,7 +275,12 @@ public class StateMachineSourceBuilder
         document.WriteLineBlockClose();
     }
 
-    private void WriteTriggerMethods(IndentedTextWriter document, MethodDeclaration[] triggers, MethodDeclaration[] states)
+    private void CreateTimersProperty(IndentedTextWriter document)
+    {
+        document.WriteLine($"private global::System.Collections.Generic.List<global::System.Threading.Timer> {TimersBackingFieldName} = [];");
+    }
+
+    private void WriteTriggerMethods(IndentedTextWriter document, MethodDeclaration[] triggers, MethodDeclaration[] states, bool hasTimers)
     {
         foreach (var trigger in triggers)
         {
@@ -258,6 +296,19 @@ public class StateMachineSourceBuilder
         document.WriteLineNoTabs();
         document.WriteLine($"private void {PrivateMemberPrefix}EnterState(State state)");
         document.WriteLineBlockOpen();
+        if (hasTimers)
+        {
+            document.WriteLine($"if ({TimersBackingFieldName}.Count > 0)");
+            document.WriteLineBlockOpen();
+            document.WriteLine($"foreach (var timer in {TimersBackingFieldName})");
+            document.WriteLineBlockOpen();
+            document.WriteLine("timer.Dispose();");
+            document.WriteLineBlockClose();
+            document.WriteLine($"{TimersBackingFieldName} = [];");
+            document.WriteLineBlockClose();
+            document.WriteLineNoTabs();
+        }
+
         document.WriteLine("CurrentState = state;");
         document.WriteLine($"{PrivateMemberPrefix}InvokeTrigger({TriggerEnumTypeName}.{PrivateMemberPrefix}Entry);");
         document.WriteLineBlockClose();
@@ -303,6 +354,10 @@ public class StateMachineSourceBuilder
                 .Where(transition => transition.TransitionType == TransitionType.OnTrigger).ToList();
             var hasTriggerTransactions = triggerTransitions.Count > 0;
 
+            var afterTransitions = state.Transitions
+                .Where(transition => transition.TransitionType == TransitionType.AfterDelay).ToList();
+            var hasAfterTransitions = afterTransitions.Count > 0;
+
             document.WriteLineNoTabs();
             document.WriteLine($"{state.Modifiers} {state.ReturnType} {state.Name}()");
             document.WriteLineBlockOpen();
@@ -321,18 +376,23 @@ public class StateMachineSourceBuilder
                 document.WriteLineNoTabs();
             }
 
-            if (hasEntryTransitions || hasTriggerTransactions)
+            if (hasEntryTransitions || hasTriggerTransactions || hasAfterTransitions)
             {
                 document.WriteLine($"switch ({_lastTriggerFieldName})");
                 document.WriteLineBlockOpen();
                 var first = true;
 
-                if (hasEntryTransitions)
+                if (hasEntryTransitions || hasAfterTransitions)
                 {
                     first = false;
 
                     document.WriteLine($"case {TriggerEnumTypeName}.{PrivateMemberPrefix}Entry:");
                     document.Indent++;
+
+                    foreach(var transition in afterTransitions)
+                    {
+                        document.WriteLine($"{PrivateMemberPrefix}StartTimer(\"{transition.Trigger}\", {TriggerEnumTypeName}.{PrivateMemberPrefix}{transition.Name});");
+                    }
                     foreach (var transitionDeclaration in onEntryTransitions)
                     {
                         WriteConditionAndAction(document, transitionDeclaration);
@@ -355,6 +415,24 @@ public class StateMachineSourceBuilder
                         document.Indent++;
                         foreach (var transition in trigger.ToList())
                             WriteConditionActionAndTransition(document, transition, onExitCall);
+                        document.WriteLine("break;");
+                        document.Indent--;
+                        first = false;
+                    }
+                }
+
+                if (hasAfterTransitions)
+                {
+                    foreach (var transition in afterTransitions)
+                    {
+                        if (!first)
+                        {
+                            document.WriteLineNoTabs();
+                        }
+
+                        document.WriteLine($"case {TriggerEnumTypeName}.{PrivateMemberPrefix}{transition.Name}:");
+                        document.Indent++;
+                        WriteConditionActionAndTransition(document, transition, onExitCall);
                         document.WriteLine("break;");
                         document.Indent--;
                         first = false;

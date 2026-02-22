@@ -1,51 +1,23 @@
-﻿using Microsoft.CodeAnalysis;
+﻿namespace Twia.StateMachine.CodeGenerator.Declarations;
 
-namespace Twia.StateMachine.CodeGenerator.Declarations;
-
-public class TransitionDeclaration : IEquatable<TransitionDeclaration>
+public abstract class TransitionDeclaration : IEquatable<TransitionDeclaration>
 {
-    public TransitionType TransitionType { get; }
+    public TransitionType TransitionType { get; protected set; }
 
-    public string Trigger { get; }
+    public string Name { get; protected set; } = null!;
+
+    public string Trigger { get; protected set; } = null!;
+
+    public string TargetState { get; protected set; } = null!;
+
+    public string? Condition { get; protected set; }
     
-    public string TargetState { get; }
-    
-    public string? Condition { get; }
-    
-    public string? Action { get; }
-
-    public TransitionDeclaration(TransitionType transitionType, AttributeData attributeData)
-    {
-        TransitionType = transitionType;
-
-        switch (transitionType)
-        {
-            case TransitionType.OnEntry:
-            case TransitionType.OnExit:
-                Trigger = transitionType.ToString();
-                TargetState = "self";
-                Action = attributeData.ConstructorArguments[0].Value?.ToString();
-                Condition = attributeData.NamedArguments.FirstOrDefault(kv => kv.Key == "Condition").Value.Value?.ToString();
-                break;
-
-            case TransitionType.AfterDelay:
-            case TransitionType.OnTrigger:
-                Trigger = attributeData.ConstructorArguments[0].Value?.ToString() ?? "";
-                TargetState = attributeData.ConstructorArguments[1].Value?.ToString() ?? "";
-                Condition = attributeData.NamedArguments.FirstOrDefault(kv => kv.Key == "Condition").Value.Value?.ToString();
-                Action = attributeData.NamedArguments.FirstOrDefault(kv => kv.Key == "Action").Value.Value?.ToString();
-                break;
-
-            default:
-                Trigger = "";
-                TargetState = "";
-                break;
-        }
-    }
+    public string? Action { get; protected set; }
 
     public bool Equals(TransitionDeclaration? other)
     {
         return other is not null
+               && Name == other.Name
                && Trigger == other.Trigger
                && TargetState == other.TargetState
                && Condition == other.Condition
@@ -64,6 +36,7 @@ public class TransitionDeclaration : IEquatable<TransitionDeclaration>
         unchecked
         {
             var hash = 29;
+            hash = hash * 31 + Name.GetHashCode();
             hash = hash * 31 + Trigger.GetHashCode();
             hash = hash * 31 + TargetState.GetHashCode();
             hash = hash * 31 + (Condition?.GetHashCode() ?? 0);

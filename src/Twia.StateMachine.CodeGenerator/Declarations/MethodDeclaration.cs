@@ -23,19 +23,19 @@ public sealed class MethodDeclaration : Declaration, IEquatable<MethodDeclaratio
             switch (attributeData.GetFullName())
             {
                 case StateMachineAttributeNames.OnEntryAttributeName:
-                    Transitions.Add(new TransitionDeclaration(TransitionType.OnEntry, attributeData));
+                    Transitions.Add(new OnEntryTransitionDeclaration(attributeData));
                     break;
 
                 case StateMachineAttributeNames.OnExitAttributeName:
-                    Transitions.Add(new TransitionDeclaration(TransitionType.OnExit, attributeData));
+                    Transitions.Add(new OnExitTransitionDeclaration(attributeData));
                     break;
 
                 case StateMachineAttributeNames.TransitionAttributeName:
-                    Transitions.Add(new TransitionDeclaration(TransitionType.OnTrigger, attributeData));
+                    Transitions.Add(new OnTriggerTransitionDeclaration(attributeData));
                     break;
 
                 case StateMachineAttributeNames.TransitionAfterAttributeName:
-                    Transitions.Add(new TransitionDeclaration(TransitionType.AfterDelay, attributeData));
+                    Transitions.Add(new AfterDelayTransitionDeclaration(Name, attributeData));
                     break;
             }
         }

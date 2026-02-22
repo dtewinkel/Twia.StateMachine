@@ -58,12 +58,14 @@ internal class IncrementalGeneratorVerifier<TGenerator> : CSharpSourceGeneratorT
         _generatedSourcesPrefix = generatedSourcesPrefix;
         _generatedSourcesSuffix = generatedSourcesSuffix;
         _compilerDiagnostics = compilerDiagnostics;
-        var majorMinor = "10.0";
+#if NET10_0
+        const string majorMinor = "10.0";
+#endif
 #if NET9_0
-        majorMinor = "9.0";
+        const string majorMinor = "9.0";
 #endif
 #if NET8_0
-        majorMinor = "8.0";
+        const string majorMinor = "8.0";
 #endif
         TestState.ReferenceAssemblies = new ReferenceAssemblies(
             $"net{majorMinor}",
@@ -90,7 +92,7 @@ internal class IncrementalGeneratorVerifier<TGenerator> : CSharpSourceGeneratorT
     public async Task VerifyGeneratorAsyncWithOnlyDiagnostics(string[] sources, DiagnosticResult[] diagnostics)
         => await VerifyGeneratorAsync(sources, diagnostics);
 
-    public async Task VerifyGeneratorAsync(string[] sources, DiagnosticResult[] diagnostics,
+    private async Task VerifyGeneratorAsync(string[] sources, DiagnosticResult[] diagnostics,
         params (string filename, string content)[] generatedSources)
     {
         TestState.Sources.Clear();
@@ -117,8 +119,8 @@ internal class IncrementalGeneratorVerifier<TGenerator> : CSharpSourceGeneratorT
         await RunAsync(CancellationToken.None);
 
         var index = 0;
-        string preparedDocument = "";
-        string actualGeneratedSource = "";
+        var preparedDocument = "";
+        var actualGeneratedSource = "";
         foreach (var (_, sourceText) in TestState.GeneratedSources)
         {
             actualGeneratedSource = (await _generatorGeneratedSources[index].GetTextAsync(CancellationToken.None)).ToString();

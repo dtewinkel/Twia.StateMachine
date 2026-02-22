@@ -32,12 +32,16 @@ public partial class LightingStateMachine
     private partial void ManualOn();
 
     [OnEntry("_lightSwitch.ToOff()")]
+    [OnEntry("_lightSwitch.Dim(0)")]
     [Transition(nameof(ButtonPressed), nameof(ManualOn))]
-    [TransitionAfter("0:00:05", nameof(LightOff))]
-    [State]private partial void ManualToOff();
+    [TransitionAfter("0:00:05", nameof(LightOff), Condition = "true")]
+    [TransitionAfter("0:00:10", nameof(LightOff))]
+    [State]
+    private partial void ManualToOff();
 
     [Transition(nameof(PresenceDetected), nameof(LightOn), Condition = $"{nameof(IsItDarkNow)}()")]
     [Transition(nameof(ButtonPressed), nameof(ManualToOff))]
+    [TransitionAfter("0:00:05", nameof(LightOff))]
     [TransitionAfter("0:00:05", nameof(LightOff))]
     [State]
     private partial void AutoToOff();

@@ -4,21 +4,23 @@ namespace Twia.StateMachine.CodeGenerator;
 
 public static class IndentedTextWriterExtensions
 {
-    public static void WriteLineBlockOpen(this IndentedTextWriter document)
+    extension(IndentedTextWriter document)
     {
-        document.WriteLine("{");
-        document.Indent++;
-    }
+        public void WriteLineBlockOpen()
+        {
+            document.WriteLine("{");
+            document.Indent++;
+        }
 
-    public static void WriteLineBlockClose(this IndentedTextWriter document)
-    {
-        document.Indent--;
-        document.WriteLine("}");
-    }
+        public void WriteLineBlockClose()
+        {
+            document.Indent--;
+            document.WriteLine("}");
+        }
 
-    public static void WriteLineNoTabs(this IndentedTextWriter document)
-    {
-        document.WriteLineNoTabs("");
+        public void WriteLineNoTabs()
+        {
+            document.WriteLineNoTabs("");
+        }
     }
-
 }
