@@ -11,12 +11,16 @@ public partial class StateMachineTransitionTests
         public List<string> States { get; } = []; 
         public List<string> Transitions { get; } = [];
 
-        public int StopCount { get; private set; } = 0;
-        public int StartCount { get; private set; } = 0;
-        public int StoppedEntryCount { get; private set; } = 0;
-        public int RunningEntryCount { get; private set; } = 0;
-        public int StoppedExitCount { get; private set; } = 0;
-        public int RunningExitCount { get; private set; } = 0;
+        public int StopCount { get; private set; }
+        public int StartCount { get; private set; }
+        public int StopWithDelayCount { get; private set; }
+        public int AfterCount { get; private set; }
+        public int StoppedEntryCount { get; private set; }
+        public int RunningEntryCount { get; private set; }
+        public int StoppingWithDelayEntryCount { get; private set; }
+        public int StoppedExitCount { get; private set; }
+        public int RunningExitCount { get; private set; }
+        public int StoppingWithDelayExitCount { get; private set; }
 
         public bool CanStart { get; set; } = true;
 
@@ -28,9 +32,16 @@ public partial class StateMachineTransitionTests
 
         [State]
         [Transition(nameof(Stop), nameof(Stopped), Action = "StopCount++; Transitions.Add(\"StopAction\")")]
+        [Transition(nameof(StopWithDelay), nameof(StoppingWithDelay), Action = "StopWithDelayCount++; Transitions.Add(\"StopWithDelayAction\")")]
         [OnEntry("RunningEntryCount++; States.Add(\"Running\"); Transitions.Add(\"RunningEntry\")")]
         [OnExit("RunningExitCount++; Transitions.Add(\"RunningExit\")")]
         private partial void Running();
+
+        [State]
+        [TransitionAfter("0:00:00.200", nameof(Stopped), Action = "AfterCount++; Transitions.Add(\"AfterAction\")")]
+        [OnEntry("StoppingWithDelayEntryCount++; States.Add(\"StoppingWithDelay\"); Transitions.Add(\"StoppingWithDelayEntry\")")]
+        [OnExit("StoppingWithDelayExitCount++; Transitions.Add(\"StoppingWithDelayExit\")")]
+        private partial void StoppingWithDelay();
 
         [InitialState]
         [Transition(nameof(Start), nameof(Running), Action = $"{nameof(StartOnStoppedAction)}()", Condition = $"{nameof(StartOnStoppedCondition)}")]
@@ -43,6 +54,9 @@ public partial class StateMachineTransitionTests
 
         [Trigger]
         public partial void Stop();
+
+        [Trigger]
+        public partial void StopWithDelay();
 
         public void OnEntryStoppedAction()
         {
@@ -174,8 +188,74 @@ public partial class StateMachineTransitionTests
             options => options.WithStrictOrdering());
     }
 
+
     [TestMethod]
-    public void Stop_InStoppedState_StaysInStoppedState()
+    public void StopWithDelay_InRunningState_TransitionsToStoppingAndAfterDelayToStoppedState()
+    {
+        var stateMachine = new TestStateMachine();
+        stateMachine.InitializeStateMachine();
+
+        stateMachine.CurrentState.Should().Be(TestStateMachine.State.Stopped);
+
+        stateMachine.Start();
+
+        stateMachine.CurrentState.Should().Be(TestStateMachine.State.Running);
+        stateMachine.StartCount.Should().Be(1);
+        stateMachine.StopWithDelayCount.Should().Be(0);
+        stateMachine.StopCount.Should().Be(0);
+        stateMachine.AfterCount.Should().Be(0);
+        stateMachine.RunningEntryCount.Should().Be(1);
+        stateMachine.StoppedEntryCount.Should().Be(1);
+        stateMachine.RunningExitCount.Should().Be(0);
+        stateMachine.StoppedExitCount.Should().Be(1);
+        stateMachine.States.Should().BeEquivalentTo(["Stopped", "Running"], options => options.WithStrictOrdering());
+        stateMachine.Transitions.Should().BeEquivalentTo([
+                "StoppedEntry", "Condition StartOnStopped=True", "StoppedExit", "StartAction", "RunningEntry"],
+            options => options.WithStrictOrdering());
+
+        stateMachine.StopWithDelay();
+
+        stateMachine.CurrentState.Should().Be(TestStateMachine.State.StoppingWithDelay);
+        stateMachine.StartCount.Should().Be(1);
+        stateMachine.StopWithDelayCount.Should().Be(1);
+        stateMachine.StopCount.Should().Be(0);
+        stateMachine.AfterCount.Should().Be(0);
+        stateMachine.RunningEntryCount.Should().Be(1);
+        stateMachine.StoppedEntryCount.Should().Be(1);
+        stateMachine.StoppingWithDelayEntryCount.Should().Be(1);
+        stateMachine.RunningExitCount.Should().Be(1);
+        stateMachine.StoppedExitCount.Should().Be(1);
+        stateMachine.StoppingWithDelayExitCount.Should().Be(0);
+        stateMachine.States.Should().BeEquivalentTo(["Stopped", "Running", "StoppingWithDelay"], options => options.WithStrictOrdering());
+        stateMachine.Transitions.Should().BeEquivalentTo([
+                "StoppedEntry", "Condition StartOnStopped=True", "StoppedExit", "StartAction", "RunningEntry",
+                "RunningExit", "StopWithDelayAction", "StoppingWithDelayEntry"],
+            options => options.WithStrictOrdering());
+
+        Thread.Sleep(TimeSpan.FromMilliseconds(100));
+        stateMachine.CurrentState.Should().Be(TestStateMachine.State.StoppingWithDelay);
+
+        Thread.Sleep(TimeSpan.FromMilliseconds(150));
+        stateMachine.CurrentState.Should().Be(TestStateMachine.State.Stopped);
+        stateMachine.StartCount.Should().Be(1);
+        stateMachine.StopWithDelayCount.Should().Be(1);
+        stateMachine.StopCount.Should().Be(0);
+        stateMachine.AfterCount.Should().Be(1);
+        stateMachine.RunningEntryCount.Should().Be(1);
+        stateMachine.StoppedEntryCount.Should().Be(2);
+        stateMachine.StoppingWithDelayEntryCount.Should().Be(1);
+        stateMachine.RunningExitCount.Should().Be(1);
+        stateMachine.StoppedExitCount.Should().Be(1);
+        stateMachine.StoppingWithDelayExitCount.Should().Be(1);
+        stateMachine.States.Should().BeEquivalentTo(["Stopped", "Running", "StoppingWithDelay", "Stopped"], options => options.WithStrictOrdering());
+        stateMachine.Transitions.Should().BeEquivalentTo([
+                "StoppedEntry", "Condition StartOnStopped=True", "StoppedExit", "StartAction", "RunningEntry",
+                "RunningExit", "StopWithDelayAction", "StoppingWithDelayEntry", "StoppingWithDelayExit", "AfterAction", "StoppedEntry"],
+            options => options.WithStrictOrdering());
+    }
+
+    [TestMethod]
+    public void Stop_InStoppedState_IgnoresTrigger()
     {
         var stateMachine = new TestStateMachine();
         stateMachine.InitializeStateMachine();
