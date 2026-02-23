@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>1701;1702;IDE0290</NoWarn>
+    <InformationalVersion>0.0.1 Demo</InformationalVersion>
+    <AssemblyVersion>0.0.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -12,11 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Twia.StateMachine\Twia.StateMachine.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Twia.StateMachine.CodeGenerator\Twia.StateMachine.CodeGenerator.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Twia.StateMachine\Twia.StateMachine.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Twia.StateMachine.CodeGenerator\Twia.StateMachine.CodeGenerator.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
 </Project>

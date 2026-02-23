@@ -8,7 +8,7 @@ Generates state machines based on attributes applied to a class and methods of t
 
 The following UML state machine diagram:
 
-![Simple state machine](media/generated/StateMachine.png)
+![Simple state machine](https://raw.githubusercontent.com/dtewinkel/Twia.StateMachine/refs/heads/main/documentation/media/generated/StateMachine.png)
 
 Can be defined in code as:
 
@@ -31,7 +31,7 @@ public partial class MyStateMachine
     [OnEntry("_engine.Run()")]
     [OnExit("_engine.Stop()")]
     [Transition(nameof(Stop), nameof(Stopped))]
-    [TransitionAfter("PT01:00:00", nameof(Stopped))]
+    [TransitionAfter("1:00:00", nameof(Stopped))]
     private partial void Running();
 
     [Trigger]
@@ -191,7 +191,7 @@ public partial class MyStateMachine
     [OnEntry("_engine.Run()")]
     [OnExit("_engine.Stop()")]
     [Transition(nameof(Stop), nameof(Stopped))]
-    [TransitionAfter("PT01:00:00", nameof(Stopped))]
+    [TransitionAfter("1:00:00", nameof(Stopped))]
     private partial void Running();
  }
 ```

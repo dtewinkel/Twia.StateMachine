@@ -32,7 +32,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>state machine trigger transition code generator generation</PackageTags>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright TWIA 2025-2026</Copyright>
     <PackageId>Twia.StateMachine</PackageId>
     <ApplicationIcon>images/twia-logo.ico</ApplicationIcon>
@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Twia.StateMachine/Twia.StateMachine.csproj" PrivateAssets="All" />
+    <ProjectReference Include="../Twia.StateMachine/Twia.StateMachine.csproj" PrivateAssets="All" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
 
@@ -65,9 +65,8 @@
     <None Include="$(OutputPath)/Twia.StateMachine.dll" Pack="true" PackagePath="lib/netstandard2.0" Visible="true" />
     <None Include="$(OutputPath)/Twia.StateMachine.xml" Pack="true" PackagePath="lib/netstandard2.0" Visible="true" />
     <None Include="images/twia-logo-128.png" Pack="true" PackagePath="/" Visible="true" />
-    <None Include="../../LICENSE.md" Pack ="true" PackagePath="/" Link="LICENSE.md"/>
-    <None Include="../../README.md" Pack ="true" PackagePath="/" Link="README.md"/>
-    <None Include="../../documentation/media/generated/StateMachine.png" Pack ="true" PackagePath="/documentation/media/generated"/>
+    <None Include="../../LICENSE.md" Pack="true" PackagePath="/" Link="LICENSE.md" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" Link="README.md" />
   </ItemGroup>
 
 </Project>

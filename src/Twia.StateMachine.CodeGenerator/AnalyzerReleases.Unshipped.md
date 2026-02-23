@@ -16,3 +16,4 @@ SMG0008 | Generator | Error |
 SMG0009 | Generator | Error |
 SMG0010 | Generator | Error |
 SMG0011 | Generator | Error |
+SMG0012 | Generator | Error |

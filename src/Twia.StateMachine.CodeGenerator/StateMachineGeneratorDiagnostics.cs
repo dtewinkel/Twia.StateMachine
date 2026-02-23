@@ -105,7 +105,16 @@ public static class StateMachineGeneratorDiagnostics
         true,
         "All stated mentioned in Transitions must be defined as a state method.");
 
-     public static Diagnostic ClassMustBePartialDiagnostics(ClassDeclarationSyntax declaration)
+    private static readonly DiagnosticDescriptor _timeSpanMustBeValidDescriptor = new(
+        "SMG0012",
+        "TimeSpan value must be valid",
+        "The time span '{0}' used for state method '{1}' must be be a valid TimeSpan parsable value",
+        "Generator",
+        DiagnosticSeverity.Error,
+        true,
+        "All time span values must be valid.");
+
+    public static Diagnostic ClassMustBePartialDiagnostics(ClassDeclarationSyntax declaration)
     {
         return Diagnostic.Create(_classMustBePartialDescriptor, declaration.Identifier.GetLocation(), declaration.Identifier.ToString());
     }
@@ -160,4 +169,8 @@ public static class StateMachineGeneratorDiagnostics
         return Diagnostic.Create(_stateMustBeDefinedDescriptor, declarationNode.Identifier.GetLocation(), state, declarationNode.Identifier.ToString());
     }
 
+    public static Diagnostic TimeSpanMustBeValid(MethodDeclarationSyntax declarationNode, string timeSpan)
+    {
+        return Diagnostic.Create(_timeSpanMustBeValidDescriptor, declarationNode.Identifier.GetLocation(), timeSpan, declarationNode.Identifier.ToString());
+    }
 }

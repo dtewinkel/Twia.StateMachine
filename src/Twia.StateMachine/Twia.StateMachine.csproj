@@ -8,6 +8,7 @@
     <NoWarn>1701;1702;IDE0290</NoWarn>
 
     <IsPackable>false</IsPackable>
+    <PackageId>Twia.StateMachine.Attributes</PackageId>
     <Title>TWIA State Machine</Title>
     <Authors>TWIA / Daniël te Winkel</Authors>
     <Product>$(SolutionName)</Product>
@@ -19,14 +20,6 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Copyright>Copyright TWIA 2025-2026</Copyright>
-    <PackageId>Twia.StateMachine.Attributes</PackageId>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="../../LICENSE.md">
-      <Pack>True</Pack>
-      <PackagePath>/</PackagePath>
-    </None>
-  </ItemGroup>
 
 </Project>
