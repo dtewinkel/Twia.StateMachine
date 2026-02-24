@@ -15,6 +15,7 @@ jobs:
     defaults:
       run:
         working-directory: src
+        shell: pwsh
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,6 +42,11 @@ jobs:
           git tag -a -f v${{ steps.gitversion.outputs.SemVer }} -m "Tag version v${{ steps.gitversion.outputs.SemVer }}"
           git push origin v${{ steps.gitversion.outputs.SemVer }}
 
+      - name: Version for NuGet
+        run: >
+          dir env:
+          Write-Host '${{ steps.gitversion.outputs }}' 
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -55,10 +61,9 @@ jobs:
           --configuration $Configuration 
           --no-restore
           -p:Version=${{ steps.gitversion.outputs.SemVer }}
-          -p:PackageVersion=${{ steps.gitversion.outputs.SemVer }}
-          -p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }}
+          -p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemFileVer }}
           -p:FileVersion=${{ steps.gitversion.outputs.FileSemVer }}
-          -p:InformationalVersion=${{ steps.gitversion.outputs.SemVer }}
+          -p:InformationalVersion=${{ steps.gitversion.outputs.InformationalVersion }}
 
       - name: Test
         run: dotnet test --solution $Solution --configuration $Configuration --no-build
