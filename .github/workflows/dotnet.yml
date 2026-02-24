@@ -43,9 +43,9 @@ jobs:
           git push origin v${{ steps.gitversion.outputs.SemVer }}
 
       - name: Version for NuGet
-        run: >
+        run: |
           dir env:
-          Write-Host '${{ steps.gitversion.outputs }}' 
+          Write-Host ('${{ steps.gitversion.outputs }}' | ConvertFrom-Json -Depth 5 | ConvertTo-Json -Depth 5 )
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
