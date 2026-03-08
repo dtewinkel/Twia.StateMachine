@@ -30,12 +30,6 @@ jobs:
       - name: Calculate version (GitVersion)
         id: gitversion
         uses: gittools/actions/gitversion/execute@v4.3.1
-        with:
-          overrideConfig: |
-
-      - name: Version for NuGet
-        run: |
-          dir env:
 
       - name: Create Tag
         if: github.ref == 'refs/heads/main'
