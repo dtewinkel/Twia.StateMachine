@@ -48,6 +48,9 @@ jobs:
       - name: Restore
         run: dotnet restore ${{ env.Solution }}
 
+      # Even though IncludeSourceRevisionInInformationalVersion is set to false, the SourceRevisionId is 
+      # still included in the InformationalVersion. Leaving IncludeSourceRevisionInInformationalVersion to 
+      # default results in the SourceRevisionId being included twice in the InformationalVersion, which is not desired.
       - name: Build
         run: >-
           dotnet build ${{ env.Solution }}
