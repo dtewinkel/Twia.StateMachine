@@ -24,10 +24,8 @@
     <Product>$(SolutionName)</Product>
     <Description>Attributes and code generator needed to generate a fully functional state machine in C#.</Description>
     <PackageProjectUrl>https://github.com/dtewinkel/Twia.StateMachine</PackageProjectUrl>
-    <AssemblyVersion>0.0.1</AssemblyVersion>
-    <FileVersion>0.0.1.0</FileVersion>
-    <Version>0.0.1-local</Version>
-    <InformationalVersion>0.0.1.0 local build</InformationalVersion>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionSuffix>local-build</VersionSuffix>
     <RepositoryUrl>https://github.com/dtewinkel/Twia.StateMachine.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>state machine trigger transition code generator generation</PackageTags>

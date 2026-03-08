@@ -15,6 +15,7 @@ jobs:
     defaults:
       run:
         working-directory: src
+        shell: pwsh
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,17 +30,15 @@ jobs:
       - name: Calculate version (GitVersion)
         id: gitversion
         uses: gittools/actions/gitversion/execute@v4.3.1
-        with:
-          overrideConfig: |
-            next-version=1.0.0
 
       - name: Create Tag
         if: github.ref == 'refs/heads/main'
         run: |
+          $label = "v${{steps.gitversion.outputs.MajorMinorPatch}}${{ steps.gitversion.outputs.PreReleaseLabelWithDash }}""
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git tag -a -f v${{ steps.gitversion.outputs.SemVer }} -m "Tag version v${{ steps.gitversion.outputs.SemVer }}"
-          git push origin v${{ steps.gitversion.outputs.SemVer }}
+          git tag -a -f $label -m "Tag version ${label}"
+          git push origin $label --force
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
@@ -47,24 +46,26 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restore
-        run: dotnet restore $Solution
+        run: dotnet restore ${{ env.Solution }}
 
+      # Even though IncludeSourceRevisionInInformationalVersion is set to false, the SourceRevisionId is 
+      # still included in the InformationalVersion. Leaving IncludeSourceRevisionInInformationalVersion to 
+      # default results in the SourceRevisionId being included twice in the InformationalVersion, which is not desired.
       - name: Build
         run: >-
-          dotnet build $Solution 
-          --configuration $Configuration 
+          dotnet build ${{ env.Solution }}
+          --configuration ${{ env.Configuration }}
           --no-restore
-          -p:Version=${{ steps.gitversion.outputs.SemVer }}
-          -p:PackageVersion=${{ steps.gitversion.outputs.SemVer }}
-          -p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }}
-          -p:FileVersion=${{ steps.gitversion.outputs.FileSemVer }}
-          -p:InformationalVersion=${{ steps.gitversion.outputs.SemVer }}
+          -p:VersionPrefix=${{ steps.gitversion.outputs.MajorMinorPatch }}
+          -p:VersionSuffix=${{ steps.gitversion.outputs.PreReleaseLabel }}
+          -p:SourceRevisionId=${{ steps.gitversion.outputs.FullBuildMetaData }}
+          -p:IncludeSourceRevisionInInformationalVersion=false
 
       - name: Test
-        run: dotnet test --solution $Solution --configuration $Configuration --no-build
+        run: dotnet test --solution ${{ env.Solution }} --configuration ${{ env.Configuration }} --no-build
 
       - name: Upload NuGet packages
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
-          path: src/Twia.StateMachine.CodeGenerator/bin/Release/*.nupkg
+          path: src/Twia.StateMachine.CodeGenerator/bin/${{ env.Configuration }}/*.nupkg

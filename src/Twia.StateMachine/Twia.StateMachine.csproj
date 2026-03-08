@@ -12,6 +12,8 @@
     <Title>TWIA State Machine</Title>
     <Authors>TWIA / Daniël te Winkel</Authors>
     <Product>$(SolutionName)</Product>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionSuffix>local-build</VersionSuffix>
     <Description>This package contains the attributes needed to generate a fully functional state machine in C#.</Description>
     <PackageProjectUrl>https://github.com/dtewinkel/Twia.StateMachine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/dtewinkel/Twia.StateMachine</RepositoryUrl>
