@@ -52,22 +52,22 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restore
-        run: dotnet restore $Solution
+        run: dotnet restore ${{ env.Solution }}
 
       - name: Build
         run: >-
-          dotnet build $Solution 
-          --configuration $Configuration 
+          dotnet build ${{ env.Solution }}
+          --configuration ${{ env.Configuration }}
           --no-restore
           -p:VersionPrefix=${{ steps.gitversion.outputs.MajorMinorPatch }}
           -p:VersionSuffix=${{ steps.gitversion.outputs.PreReleaseLabel }}
           -p:SourceRevisionId=${{ steps.gitversion.outputs.FullBuildMetaData }}
 
       - name: Test
-        run: dotnet test --solution $Solution --configuration $Configuration --no-build
+        run: dotnet test --solution ${{ env.Solution }} --configuration ${{ env.Configuration }} --no-build
 
       - name: Upload NuGet packages
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
-          path: src/Twia.StateMachine.CodeGenerator/bin/Release/*.nupkg
+          path: src/Twia.StateMachine.CodeGenerator/bin/${{ env.Configuration }}/*.nupkg
