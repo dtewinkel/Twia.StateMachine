@@ -69,3 +69,4 @@ jobs:
         with:
           name: nuget-packages
           path: src/Twia.StateMachine/bin/${{ env.Configuration }}/*.nupkg
+          if-no-files-found: error
