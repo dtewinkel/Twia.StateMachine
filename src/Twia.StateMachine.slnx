@@ -9,5 +9,7 @@
   <Project Path="Twia.StateMachine.CodeGenerator/Twia.StateMachine.CodeGenerator.csproj" />
   <Project Path="Twia.StateMachine.Example/Twia.StateMachine.Example.csproj" />
   <Project Path="Twia.StateMachine.IntegrationTests/Twia.StateMachine.IntegrationTests.csproj" />
-  <Project Path="Twia.StateMachine/Twia.StateMachine.csproj" />
+  <Project Path="Twia.StateMachine/Twia.StateMachine.csproj">
+    <BuildDependency Project="Twia.StateMachine.CodeGenerator/Twia.StateMachine.CodeGenerator.csproj" />
+  </Project>
 </Solution>

@@ -32,8 +32,4 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../Twia.StateMachine/Twia.StateMachine.csproj" PrivateAssets="All" AdditionalProperties="TargetFramework=netstandard2.0" />
-  </ItemGroup>
-
 </Project>

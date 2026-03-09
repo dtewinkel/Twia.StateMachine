@@ -17,7 +17,7 @@
     <Product>$(SolutionName)</Product>
     <Description>Attributes and code generator needed to generate a fully functional state machine in C#.</Description>
     <PackageProjectUrl>https://github.com/dtewinkel/Twia.StateMachine</PackageProjectUrl>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>0.0.1</VersionPrefix>
     <VersionSuffix>local-build</VersionSuffix>
     <RepositoryUrl>https://github.com/dtewinkel/Twia.StateMachine.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -41,8 +41,7 @@
   </Target>
 
   <ItemGroup>
-    <None Include="../Twia.StateMachine.CodeGenerator/bin/$(Configuration)/netstandard2.0/Twia.StateMachine.CodeGenerator.dll" 
-          Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="../Twia.StateMachine.CodeGenerator/bin/$(Configuration)/netstandard2.0/Twia.StateMachine.CodeGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="images/twia-logo-128.png" Pack="true" PackagePath="/" Visible="true" />
     <None Include="../../LICENSE.md" Pack="true" PackagePath="/" Link="LICENSE.md" />
     <None Include="../../README.md" Pack="true" PackagePath="/" Link="README.md" />
