@@ -68,4 +68,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
-          path: src/Twia.StateMachine.CodeGenerator/bin/${{ env.Configuration }}/*.nupkg
+          path: src/Twia.StateMachine/bin/${{ env.Configuration }}/*.nupkg
+          if-no-files-found: error
