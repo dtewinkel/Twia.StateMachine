@@ -2,6 +2,14 @@
 
 A generator of simple state machines, defined by attributes and conventions, for C# applications.
 
+## Getting started
+
+1. Install the [Twia.StateMachine](https://www.nuget.org/packages/Twia.StateMachine) package from [NuGet](https://www.nuget.org/).
+2. Create a state machine class with triggers, states and transitions. 
+   - See [Overview](#overview) for a quick but insightful overview.
+   - See [Attributes](#attributes) for a detailed description of the attributes that can be used to define the state machine.
+3. Use the state machine.
+
 ## Overview
 
 Generates state machines based on attributes applied to a class and methods of that class.
@@ -67,12 +75,6 @@ if(stateMachine.CurrentState == MyStateMachine.State.Running)
     stateMachine.Stop();
 }
 ```
-
-## Getting started
-
-1. Install the 'Twia.StateMachine' package from NuGet.
-2. Create a state machine class with its triggers, states and transitions.
-3. Use the state machine.
 
 ## Attributes
 
