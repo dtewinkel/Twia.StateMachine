@@ -9,17 +9,13 @@ public class ContainingClassDeclaration : ParentDeclaration, IEquatable<Containi
         ClassDeclaration = new ClassDeclaration(classDeclaration);
     }
 
-    public string Modifiers => ClassDeclaration.Modifiers;
-    public string Name => ClassDeclaration.Name;
-    public bool IsPartial => ClassDeclaration.IsPartial;
-
-    private ClassDeclaration ClassDeclaration { get; }
+    public ClassDeclaration ClassDeclaration { get; }
 
     public ParentDeclaration? Parent => ClassDeclaration.Parent;
 
     public override string? FullNamespaceName => Parent?.FullNamespaceName;
 
-    public override string HintNameForSource => $"{(Parent is not null ? $"{Parent.HintNameForSource}." : "")}{Name}";
+    public override string HintNameForSource => $"{(Parent is not null ? $"{Parent.HintNameForSource}." : "")}{ClassDeclaration.Name}";
 
 
     public bool Equals(ContainingClassDeclaration? other)

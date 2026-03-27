@@ -15,9 +15,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TestFiles\**" />
-    <EmbeddedResource Remove="TestFiles\**" />
-    <None Remove="TestFiles\**" />
+    <Compile Remove="TestFiles\NestedClass.cs" />
+    <Compile Remove="TestFiles\NestedClass.e.cs" />
+    <Compile Remove="TestFiles\NoStateNoTriggers.cs" />
+    <Compile Remove="TestFiles\NoStateNoTriggers.e.cs" />
+    <Compile Remove="TestFiles\OnlyStatesAndNoTriggers.cs" />
+    <Compile Remove="TestFiles\OnlyStatesAndNoTriggers.e.cs" />
+    <Compile Remove="TestFiles\WithAttributes.cs" />
+    <Compile Remove="TestFiles\WithAttributes.e.cs" />
+    <Compile Remove="TestFiles\WithFullAttributeNames.cs" />
+    <Compile Remove="TestFiles\WithFullAttributeNames.e.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +50,36 @@
 
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="TestFiles\NestedClass.e.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\NestedClass.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\WithFullAttributeNames.e.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\WithFullAttributeNames.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\WithAttributes.e.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\WithAttributes.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\OnlyStatesAndNoTriggers.e.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\OnlyStatesAndNoTriggers.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\NoStateNoTriggers.e.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\NoStateNoTriggers.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

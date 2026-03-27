@@ -17,10 +17,7 @@ public class StateMachineIncrementalCodeGenerator: IIncrementalGenerator
 
     private static void AddSource(SourceProductionContext context, StateMachineDeclaration declaration)
     {
-        if (!StateMachineValidator.IsDeclarationValid(context, declaration))
-        {
-            return;
-        }
+        StateMachineValidator.IsDeclarationValid(context, declaration);
 
         var sourceBuilder = new StateMachineSourceBuilder();
         sourceBuilder.AddSource(context, declaration);

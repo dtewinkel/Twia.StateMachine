@@ -18,6 +18,8 @@ public sealed class MethodDeclaration : Declaration, IEquatable<MethodDeclaratio
         IsTrigger = attributes.Any(attribute => attribute.GetFullName() == StateMachineAttributeNames.TriggerAttributeName);
         IsInitial = attributes.Any(attribute => attribute.GetFullName() == StateMachineAttributeNames.InitialStateAttributeName);
 
+        var index = 1;
+
         foreach (var attributeData in attributes)
         {
             switch (attributeData.GetFullName())
@@ -35,7 +37,7 @@ public sealed class MethodDeclaration : Declaration, IEquatable<MethodDeclaratio
                     break;
 
                 case StateMachineAttributeNames.TransitionAfterAttributeName:
-                    Transitions.Add(new AfterDelayTransitionDeclaration(Name, attributeData));
+                    Transitions.Add(new AfterDelayTransitionDeclaration(Name, index++, attributeData));
                     break;
             }
         }

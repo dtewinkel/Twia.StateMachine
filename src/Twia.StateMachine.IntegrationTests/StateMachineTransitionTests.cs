@@ -24,12 +24,6 @@ public partial class StateMachineTransitionTests
 
         public bool CanStart { get; set; } = true;
 
-        private bool LogCondition(string condition, bool conditionValue)
-        {
-            Transitions.Add($"Condition {condition}={conditionValue}");
-            return conditionValue;
-        }
-
         [State]
         [Transition(nameof(Stop), nameof(Stopped), Action = "StopCount++; Transitions.Add(\"StopAction\")")]
         [Transition(nameof(StopWithDelay), nameof(StoppingWithDelay), Action = "StopWithDelayCount++; Transitions.Add(\"StopWithDelayAction\")")]

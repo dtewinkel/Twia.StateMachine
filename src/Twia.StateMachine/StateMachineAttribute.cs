@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Data;
+using System.Diagnostics;
 
 namespace Twia.StateMachine;
 
@@ -10,4 +11,18 @@ namespace Twia.StateMachine;
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class)]
 [Conditional("INCLUDE_STATE_MACHINE_ATTRIBUTES")]
-public class StateMachineAttribute : Attribute;
+public class StateMachineAttribute : Attribute
+{
+    /// <summary>
+    /// Add accessibility to the current state of the state machine. This allows external code to read the current state, but not change it.
+    /// Default is true, which means the current state is accessible. Setting this to false will make the current state inaccessible.
+    /// Results in <see cref="IStateAccess{TState}"/> being implemented, where TState is the State enum of the state machine.
+    /// </summary>
+    public bool StateAccessible { get; set; } = true;
+
+    /// <summary>
+    /// Create an StateChange event that can be observed by external code.
+    /// Results in <see cref="IStateMachineEvents{TState}"/> being implemented, where TState is the State enum of the state machine.
+    /// </summary>
+    public bool Observable { get; set; } = false;
+}

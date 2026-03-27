@@ -1,6 +1,6 @@
 ﻿namespace Twia.StateMachine.Example;
 
-[StateMachine]
+[StateMachine(Observable = true, StateAccessible = true)]
 public partial class LightingStateMachine
 {
     private readonly ILightSwitch _lightSwitch;
@@ -13,7 +13,8 @@ public partial class LightingStateMachine
     }
 
     [OnEntry("_lightSwitch.ToOff()")]
-    [Transition(nameof(PresenceDetected), nameof(LightOn), Condition = $"{nameof(IsItDarkNow)}()", Action = "_lightSwitch.Dim(25)")]
+    [Transition(nameof(PresenceDetected), nameof(LightOn), Condition = $"{nameof(IsItDarkNow)}()",
+        Action = "_lightSwitch.Dim(25)")]
     [Transition(nameof(PresenceDetected), nameof(LightOff), Condition = $"!{nameof(IsItDarkNow)}()")]
     [Transition(nameof(ButtonPressed), nameof(ManualOn))]
     [InitialState]
@@ -41,7 +42,6 @@ public partial class LightingStateMachine
 
     [Transition(nameof(PresenceDetected), nameof(LightOn), Condition = $"{nameof(IsItDarkNow)}()")]
     [Transition(nameof(ButtonPressed), nameof(ManualToOff))]
-    [TransitionAfter("0:00:05", nameof(LightOff))]
     [TransitionAfter("0:00:05", nameof(LightOff))]
     [State]
     private partial void AutoToOff();

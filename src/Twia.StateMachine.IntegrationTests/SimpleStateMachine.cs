@@ -1,9 +1,9 @@
-﻿namespace Twia.StateMachine.IntegrationTests;
+﻿ namespace Twia.StateMachine.IntegrationTests;
 
 [StateMachine]
 public partial class SimpleStateMachine
 {
-    private int _field = 0;
+    private int _field;
 
     [Trigger]
     public partial void Trigger1();
@@ -32,4 +32,25 @@ public partial class SimpleStateMachine
         // Condition to check
         return _field < 10;
     }
+}
+
+[StateMachine(StateAccessible = true, Observable = true)]
+public partial class SimpleStateMachine2
+{
+    private int _counter;
+
+    [InitialState]
+    [Transition(nameof(Two), nameof(Three), Condition = "_counter < 500")]
+    [OnEntry("_counter++", Condition = "_counter < 1000")]
+    [OnExit("_counter++", Condition = "_counter > 100")]
+    private partial void One();
+
+
+    [State]
+    [Transition(nameof(Two), nameof(One))]
+    [TransitionAfter("1:00:00", nameof(Three))]
+    private partial void Three();
+
+    [Trigger]
+    public partial void Two();
 }
