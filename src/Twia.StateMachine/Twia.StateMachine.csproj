@@ -9,6 +9,7 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Configurations>Debug;Release;Snapshots</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>

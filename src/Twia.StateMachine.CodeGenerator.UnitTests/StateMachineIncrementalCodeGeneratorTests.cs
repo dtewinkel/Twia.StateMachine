@@ -405,11 +405,14 @@ public sealed class StateMachineIncrementalCodeGeneratorTests
     [DataRow("NestedClass", DisplayName = "NestedClass")]
     [DataRow("NoStateNoTriggers", DisplayName = "NoStateNoTriggers")]
     [DataRow("OnlyStatesAndNoTriggers", DisplayName = "OnlyStatesAndNoTriggers")]
+    [DataRow("WithConditionsAndActions", DisplayName = "WithConditionsAndActions")]
     public async Task Generator_GeneratesCode(string testDataName)
     {
         var code = await File.ReadAllTextAsync($"Testfiles/{testDataName}.cs", TestContext.CancellationToken);
         var expectedCode = await File.ReadAllTextAsync($"Testfiles/{testDataName}.e.cs", TestContext.CancellationToken);
+#if SNAPSHOTS
         _verifier.OutputFile = Path.Join(Path.GetTempPath(), $"{testDataName}.g.cs");
+#endif
 
         await _verifier.VerifyGeneratorAsync([code], ("*UnitTestEmptyStateMachine*", expectedCode));
     }
