@@ -53,7 +53,7 @@ internal class ObservableBuilder : BuilderBase
     {
         if (IsEnabled)
         {
-            _document.WriteLine($"{_stateChangedMethodName}({_statesBuilder.StateFieldName} , {newStateParameterName}, {reasonParameterName});");
+            _document.WriteLine($"{_stateChangedMethodName}({_statesBuilder.StateFieldName}, {newStateParameterName}, {reasonParameterName});");
             _document.WriteLineNoTabs();
         }
     }

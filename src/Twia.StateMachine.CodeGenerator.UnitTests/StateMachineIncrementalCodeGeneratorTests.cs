@@ -406,6 +406,7 @@ public sealed class StateMachineIncrementalCodeGeneratorTests
     [DataRow("NoStateNoTriggers", DisplayName = "NoStateNoTriggers")]
     [DataRow("OnlyStatesAndNoTriggers", DisplayName = "OnlyStatesAndNoTriggers")]
     [DataRow("WithConditionsAndActions", DisplayName = "WithConditionsAndActions")]
+    [DataRow("Observable", DisplayName = "Observable")]
     public async Task Generator_GeneratesCode(string testDataName)
     {
         var code = await File.ReadAllTextAsync($"Testfiles/{testDataName}.cs", TestContext.CancellationToken);
