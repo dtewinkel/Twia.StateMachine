@@ -44,8 +44,6 @@ internal class StatesBuilder : BuilderBase
 
     public string? InitialStateName { get; }
 
-    public override string[] ImplementedInterfaces => _stateIsAccessible ? [$"IStateAccess<{StateFullTypeName}>"] : [];
-
     public List<string> StateNames { get; }
 
     public string EnterStateMethodName { get; }

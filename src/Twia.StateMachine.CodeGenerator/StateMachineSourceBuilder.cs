@@ -38,8 +38,7 @@ public class StateMachineSourceBuilder
                 .Where(builder => builder.IsEnabled)
                 .ToList();
 
-            var interfaces = GetAll(builders, sourceBuilder => sourceBuilder.ImplementedInterfaces);
-            classCommonBuilder.StartClass(interfaces);
+            classCommonBuilder.StartClass();
 
             var codeAdded = GenerateAll(builders, document, false, sourceBuilder => sourceBuilder.AddTypes());
             codeAdded = GenerateAll(builders, document, codeAdded, sourceBuilder => sourceBuilder.AddConstants());

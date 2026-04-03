@@ -9,7 +9,7 @@ public partial class GrandParentClass
     public partial class ParentClass
     {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Twia.StateMachine.CodeGenerator", "{{Version}}")]
-        public partial class UnitTestStateMachine : IStateAccess<UnitTestStateMachine.State>
+        public partial class UnitTestStateMachine
         {
             /// <summary>
             /// Enumeration of the states that the state machine can be in.

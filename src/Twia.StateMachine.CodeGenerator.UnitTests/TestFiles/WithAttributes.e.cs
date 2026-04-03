@@ -5,7 +5,7 @@
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 
 [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Twia.StateMachine.CodeGenerator", "{{Version}}")]
-internal partial class UnitTestEmptyStateMachine : IStateAccess<UnitTestEmptyStateMachine.State>
+internal partial class UnitTestEmptyStateMachine
 {
     /// <summary>
     /// Enumeration of the states that the state machine can be in.

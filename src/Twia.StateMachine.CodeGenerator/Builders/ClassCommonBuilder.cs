@@ -38,7 +38,7 @@ internal class ClassCommonBuilder
 
     public string ToPrivateName(string name) => $"{_privatePrefix}{name}";
 
-    public void StartClass(List<string> interfaces)
+    public void StartClass()
     {
         var typeNameParts = new List<string>();
 
@@ -47,7 +47,7 @@ internal class ClassCommonBuilder
 
         AddParentClass(_declaration.Parent, typeNameParts);
         _document.WriteLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{_generatorName}\", \"{_generatorVersion}\")]");
-        AddClassStart(_declaration, typeNameParts, interfaces);
+        AddClassStart(_declaration, typeNameParts);
          
         FullStateMachineTypeName = string.Join(".", typeNameParts);
     }
@@ -87,14 +87,12 @@ internal class ClassCommonBuilder
             AddParentClass(containingClass.Parent, typeNameParts);
         }
 
-        AddClassStart(containingClass.ClassDeclaration, typeNameParts, []);
+        AddClassStart(containingClass.ClassDeclaration, typeNameParts);
     }
 
-    private void AddClassStart(ClassDeclaration declaration, List<string> typeNameParts, List<string> interfaces)
+    private void AddClassStart(ClassDeclaration declaration, List<string> typeNameParts)
     {
-        var interfacesDeclaration = interfaces.Count > 0 ? $" : {string.Join(", ", interfaces)}" : string.Empty;
-
-        _document.WriteLine($"{declaration.Modifiers} class {declaration.Name}{interfacesDeclaration}");
+        _document.WriteLine($"{declaration.Modifiers} class {declaration.Name}");
         _document.WriteLineBlockOpen();
 
         typeNameParts.Add(declaration.Name);

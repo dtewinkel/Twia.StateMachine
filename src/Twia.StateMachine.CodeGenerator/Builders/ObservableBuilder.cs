@@ -22,8 +22,6 @@ internal class ObservableBuilder : BuilderBase
 
     public override bool IsEnabled => _declaration.Observable;
 
-    public override string[] ImplementedInterfaces => IsEnabled ? [$"IStateMachineEvents<{_statesBuilder.StateFullTypeName}>"] : [];
-
     public override bool AddPrivateMethods()
     {
         _document.WriteLine($"private void {_stateChangedMethodName}(");

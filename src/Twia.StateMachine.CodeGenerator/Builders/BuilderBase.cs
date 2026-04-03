@@ -4,8 +4,6 @@ internal class BuilderBase
 {
     public virtual bool IsEnabled => true;
 
-    public virtual string[] ImplementedInterfaces => [];
-
     public virtual bool AddTypes() => false;
 
     public virtual bool AddConstants() => false;
