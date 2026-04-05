@@ -33,24 +33,3 @@ public partial class SimpleStateMachine
         return _field < 10;
     }
 }
-
-[StateMachine(StateAccessible = true, Observable = true)]
-public partial class SimpleStateMachine2
-{
-    private int _counter;
-
-    [InitialState]
-    [Transition(nameof(Two), nameof(Three), Condition = "_counter < 500")]
-    [OnEntry("_counter++", Condition = "_counter < 1000")]
-    [OnExit("_counter++", Condition = "_counter > 100")]
-    private partial void One();
-
-
-    [State]
-    [Transition(nameof(Two), nameof(One))]
-    [TransitionAfter("1:00:00", nameof(Three))]
-    private partial void Three();
-
-    [Trigger]
-    public partial void Two();
-}
