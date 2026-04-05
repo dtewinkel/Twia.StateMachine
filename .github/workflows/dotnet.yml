@@ -61,13 +61,6 @@ jobs:
           -p:SourceRevisionId=${{ steps.gitversion.outputs.FullBuildMetaData }}
           -p:IncludeSourceRevisionInInformationalVersion=false
 
-      - name: Upload NuGet packages
-        uses: actions/upload-artifact@v6
-        with:
-          name: build
-          path: src/
-          if-no-files-found: error
-
       - name: Test
         run: dotnet test --solution ${{ env.Solution }} --configuration ${{ env.Configuration }} --no-build
 

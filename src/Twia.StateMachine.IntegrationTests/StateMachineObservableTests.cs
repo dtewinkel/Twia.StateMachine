@@ -182,7 +182,7 @@ public partial class StateMachineObservableTests
 
 
     [TestMethod]
-    public void InitializeStateMachine_ReportsStateChange__Action()
+    public void InitializeStateMachine_ReportsStateChange()
     {
         var stateMachine = new TestStateMachine();
 

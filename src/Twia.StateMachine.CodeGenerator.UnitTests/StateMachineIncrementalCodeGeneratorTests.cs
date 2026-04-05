@@ -409,8 +409,8 @@ public sealed class StateMachineIncrementalCodeGeneratorTests
     [DataRow("Observable", DisplayName = "Observable")]
     public async Task Generator_GeneratesCode(string testDataName)
     {
-        var code = await File.ReadAllTextAsync($"Testfiles/{testDataName}.cs", TestContext.CancellationToken);
-        var expectedCode = await File.ReadAllTextAsync($"Testfiles/{testDataName}.e.cs", TestContext.CancellationToken);
+        var code = await File.ReadAllTextAsync($"TestFiles/{testDataName}.cs", TestContext.CancellationToken);
+        var expectedCode = await File.ReadAllTextAsync($"TestFiles/{testDataName}.e.cs", TestContext.CancellationToken);
 #if SNAPSHOTS
         _verifier.OutputFile = Path.Join(Path.GetTempPath(), $"{testDataName}.g.cs");
 #endif
