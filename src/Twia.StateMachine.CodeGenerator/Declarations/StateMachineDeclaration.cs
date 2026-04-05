@@ -7,6 +7,12 @@ public sealed class StateMachineDeclaration : ClassDeclaration, IEquatable<State
 {
     public StateMachineDeclaration(ClassDeclarationSyntax node, INamedTypeSymbol symbol) : base(node)
     {
+        var stateMachineAttribute = symbol
+            .GetAttributes()
+            .Single(attribute => attribute.GetFullName() == StateMachineAttributeNames.StateMachineAttributeName);
+        StateAccessible = stateMachineAttribute.NamedArguments.FirstOrDefault(kv => kv.Key == "StateAccessible").Value.Value as bool? ?? true;
+        Observable = stateMachineAttribute.NamedArguments.FirstOrDefault(kv => kv.Key == "Observable").Value.Value as bool? ?? false;
+
         foreach (var member in symbol.GetMembers())
         {
             if (member is not IMethodSymbol method)
@@ -30,15 +36,21 @@ public sealed class StateMachineDeclaration : ClassDeclaration, IEquatable<State
 
     public List<MethodDeclaration> Methods { get; } = [];
 
+    public bool StateAccessible { get; }
+
+    public bool Observable { get; }
+
     public bool Equals(StateMachineDeclaration? other)
     {
-        return base.Equals(other) 
+        return base.Equals(other)
+               && StateAccessible == other.StateAccessible
+               && Observable == other.Observable
                && Methods.SequenceEqual(other.Methods);
     }
 
     public override bool Equals(object? other)
     {
-        return other is StateMachineDeclaration otherStateMachineDeclaration 
+        return other is StateMachineDeclaration otherStateMachineDeclaration
                && Equals(otherStateMachineDeclaration);
     }
 
@@ -47,6 +59,8 @@ public sealed class StateMachineDeclaration : ClassDeclaration, IEquatable<State
         unchecked
         {
             var hash = base.GetHashCode();
+            hash = hash * 31 + Observable.GetHashCode();
+            hash = hash * 31 + StateAccessible.GetHashCode();
 
             if (Methods.Count > 0)
             {

@@ -7,6 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnableMSTestRunner>true</EnableMSTestRunner>
+    <Configurations>Debug;Release;Snapshots</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Snapshots'">
+    <DefineConstants>$(DefineConstants);SNAPSHOTS</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,20 +20,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TestFiles\**" />
-    <EmbeddedResource Remove="TestFiles\**" />
-    <None Remove="TestFiles\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
+    <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
     <PackageReference Include="DiffPlex" Version="1.9.0" />
     <PackageReference Include="Handlebars.Net" Version="2.1.6" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing" Version="1.1.3" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.3.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageReference Include="MSTest" Version="4.1.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="10.0.3" />
+    <PackageReference Include="System.Formats.Asn1" Version="10.0.5" />
 
   </ItemGroup>
 
@@ -43,6 +42,13 @@
 
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="TestFiles/*.cs" />
+    <None Include="TestFiles/*.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

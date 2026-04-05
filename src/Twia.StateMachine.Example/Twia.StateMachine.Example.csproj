@@ -7,9 +7,14 @@
     <NoWarn>1701;1702;IDE0290</NoWarn>
     <InformationalVersion>0.0.1 Demo</InformationalVersion>
     <AssemblyVersion>0.0.1.0</AssemblyVersion>
+    <Configurations>Debug;Release;Snapshots</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>$(DefineConstants);INCLUDE_STATE_MACHINE_ATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Snapshots'">
     <DefineConstants>$(DefineConstants);INCLUDE_STATE_MACHINE_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
 

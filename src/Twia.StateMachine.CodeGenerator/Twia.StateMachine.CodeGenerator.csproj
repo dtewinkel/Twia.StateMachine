@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>1701;1702;IDE0290</NoWarn>
+    <Configurations>Debug;Release;Snapshots</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>

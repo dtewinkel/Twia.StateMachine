@@ -2,6 +2,14 @@
 
 A generator of simple state machines, defined by attributes and conventions, for C# applications.
 
+## Getting started
+
+1. Install the [Twia.StateMachine](https://www.nuget.org/packages/Twia.StateMachine) package from [NuGet](https://www.nuget.org/).
+2. Create a state machine class with triggers, states and transitions. 
+   - See [Overview](#overview) for a quick but insightful overview.
+   - See [Attributes](#attributes) for a detailed description of the attributes that can be used to define the state machine.
+3. Use the state machine.
+
 ## Overview
 
 Generates state machines based on attributes applied to a class and methods of that class.
@@ -68,12 +76,6 @@ if(stateMachine.CurrentState == MyStateMachine.State.Running)
 }
 ```
 
-## Getting started
-
-1. Install the 'Twia.StateMachine' package from NuGet.
-2. Create a state machine class with its triggers, states and transitions.
-3. Use the state machine.
-
 ## Attributes
 
 A number of attributes are available to define the state machine.
@@ -92,6 +94,20 @@ public partial class MyStateMachine
 ```
 
 A state machine class can be embedded in another class.
+
+The state machine attribute has two optional parameters:
+
+- `StateAccessible`: defautls to `true`. Set to `false` to not add the `IStateAccess<TState>` interface to the state machine class, and thus not generate the `CurrentState` property.
+- `Observable`: defaults to `false`. Set to `true` to add the `IStateMachineEvents<TState>` interface to the state machine class, and thus generate the `StateChanged` event.
+
+If both parameters are set to `false`, the state machine will not generate the `State` enum as a public type.
+
+```csharp
+[StateMachine(Observable = false, StateAccessible = false)]
+public partial class MyStateMachine
+{
+}
+```
 
 ### Triggers
 
@@ -224,6 +240,10 @@ public partial class MyStateMachine
 
 In addition to the states and trigger, the following methods, types and properties are generated for each state machine class:
 
-- method `void InitializeStateMachine()`. Initializes the state machine and brings it to the initial state.
-- enum `State`, embedded in the state machine class. Contains all states of the state machine as enum members.
+- Method `void InitializeStateMachine()`. Initializes the state machine and brings it to the initial state.
+- Enum `State`, embedded in the state machine class. Contains all states of the state machine as enum members.
+  Enum `State` is only generated if at least on of the `StateAccessible` and `Observable` parameters of the `StateMachineAttribute` is `true`.
 - Raad-only property `State CurrentState { get; }`. Returns the current state of the state machine.
+  Property `CurrentState` is only generated if the `StateAccessible` parameter of the `StateMachineAttribute` is `true`.
+- Event `event EventHandler<StateChangedEventArgs<TState>>? OnStateChanged;`. Event to be notified about state changes. 
+  Event `OnStateChanged` is only generated if the `Observable` parameter of the `StateMachineAttribute` is `true`.

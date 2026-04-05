@@ -1,9 +1,9 @@
-﻿namespace Twia.StateMachine.IntegrationTests;
+﻿ namespace Twia.StateMachine.IntegrationTests;
 
 [StateMachine]
 public partial class SimpleStateMachine
 {
-    private int _field = 0;
+    private int _field;
 
     [Trigger]
     public partial void Trigger1();
