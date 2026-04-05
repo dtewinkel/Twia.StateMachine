@@ -1,7 +1,6 @@
 1.1.0:
 
   - ADD: Ability in the `StateMachineAttribute` to hide current state from the outside world.
-  - ADD: Interface to access the current state.
   - ADD: Support to report state changes as an event.
 
   - FIX: Version of generator in GeneratedCodeAttribute.
