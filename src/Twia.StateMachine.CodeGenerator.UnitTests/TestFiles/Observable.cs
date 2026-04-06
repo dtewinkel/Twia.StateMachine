@@ -16,4 +16,6 @@ internal partial class UnitTestEmptyStateMachine
 
     [State]
     partial void On();
+
+    ev
 }
