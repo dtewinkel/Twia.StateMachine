@@ -1,3 +1,7 @@
+1.1.1:
+
+  - FIX: Generate full namespace for the EventHandler and StateChangedEventArgs usage in the state machine.
+
 1.1.0:
 
   - ADD: Ability in the `StateMachineAttribute` to hide current state from the outside world.
