@@ -80,6 +80,10 @@ public sealed partial record MethodDeclaration : Declaration
 
     public bool IsInitial { get; }
 
+    public bool HasParameters => Parameters.Count > 0;
+
+    public bool HasTransitions => Transitions.Count > 0;
+
     [SequenceEquality]
     public List<ParameterDeclaration> Parameters { get; } = [];
 

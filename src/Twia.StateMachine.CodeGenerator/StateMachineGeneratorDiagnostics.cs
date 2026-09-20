@@ -17,29 +17,29 @@ public static class StateMachineGeneratorDiagnostics
     private static readonly DiagnosticDescriptor _multipleInitialStatesDescriptor = new(
         "SMG0002",
         "Only one InitialState allowed",
-        "The method '{0}' is marked as InitialState, but method '{1}' is als marked as InitialState",
+        "The method '{0}' is marked as InitialState, but method '{1}' is also marked as InitialState",
         "Generator",
         DiagnosticSeverity.Error,
         true,
-        "Only a single state can be marked with InitialStateAttribute.");
+        "Only one state can be marked with an InitialStateAttribute.");
 
     private static readonly DiagnosticDescriptor _noInitialStateDescriptor = new(
         "SMG0003",
-        "At least one InitialState must be defined",
-        "The class '{0}' must have one State that is marked as InitialState",
+        "An InitialState must be defined",
+        "The class '{0}' must have one state that is marked as InitialState",
         "Generator",
         DiagnosticSeverity.Error,
         true,
-        "A single method with the StateAttribute must be marked with an InitialStateAttribute.");
+        "A single state method must be marked with an InitialStateAttribute.");
 
     private static readonly DiagnosticDescriptor _methodCannotBeTriggerAndStateDescriptor = new(
         "SMG0004",
-        "Method cannot be a trigger and a state at the same time",
-        "The method '{0}' can not be a trigger and a state at the same time",
+        "A state method cannot be a trigger the same time",
+        "The state method '{0}' can not be a trigger at the same time",
         "Generator",
         DiagnosticSeverity.Error,
         true,
-        "A method can only be a trigger (with the TriggerAttribute) or a state (with the StateAttribute).");
+        "A state method (with the StateAttribute or InitialStateAttribute) can not be a trigger (with the TriggerAttribute).");
 
     private static readonly DiagnosticDescriptor _methodMustBeAStateDescriptor = new(
         "SMG0005",
@@ -48,17 +48,17 @@ public static class StateMachineGeneratorDiagnostics
         "Generator",
         DiagnosticSeverity.Error,
         true,
-        "When any of the transition attributes (OnEntryAttribute, OnExitAttribute, TransitionAttribute, or TransitionAfterAttribute), or the InitialStateAttribute is used on a method, " +
+        "When any of the transition attributes (e.g. OnEntryAttribute, OnExitAttribute, TransitionAttribute, or TransitionAfterAttribute), " +
             "then that method must be marker with the StateAttribute.");
 
     private static readonly DiagnosticDescriptor _triggerCannotHaveStateAttributesDescriptor = new(
         "SMG0006",
-        "Trigger can not have state attributes",
-        "The method '{0}' is declared as a trigger and cannot use any of the transition or initial state attributes",
+        "Trigger can not have transition attributes",
+        "The method '{0}' is declared as a trigger and cannot use any of the transitions",
         "Generator",
         DiagnosticSeverity.Error,
         true,
-        "A method marked as a trigger with the TriggerAttribute cannot have any of the transition attributes (OnEntryAttribute, OnExitAttribute, TransitionAttribute, or TransitionAfterAttribute), or the InitialStateAttribute applied.");
+        "A method marked as a trigger with the TriggerAttribute cannot have any of the transition attributes (e.g. OnEntryAttribute, OnExitAttribute, TransitionAttribute, or TransitionAfterAttribute) applied.");
 
     private static readonly DiagnosticDescriptor _methodMustBePartialDescriptor = new(
         "SMG0007",
@@ -81,7 +81,7 @@ public static class StateMachineGeneratorDiagnostics
     private static readonly DiagnosticDescriptor _methodMustHaveNoParametersDescriptor = new(
         "SMG0009",
         "Method must have no parameters",
-        "The method '{0}' must not have parameters",
+        "The method '{0}' must have no parameters",
         "Generator",
         DiagnosticSeverity.Error,
         true,
@@ -112,7 +112,7 @@ public static class StateMachineGeneratorDiagnostics
         "Generator",
         DiagnosticSeverity.Error,
         true,
-        "All time span values must be valid.");
+        "All time-span values must be valid.");
 
     public static Diagnostic ClassMustBePartialDiagnostics(ClassDeclarationSyntax declaration)
     {

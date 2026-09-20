@@ -1,15 +1,15 @@
-/***
-* Name: StateMachine attribute not partial class
-* Output: None
-* Diagnostics:
-* - SMG0001, 13, 14, "UnitTestEmptyStateMachine"
-***/
+---
+Name: 'SMG001 - StateMachine attribute on class that is not partial'
+Output: None
+Diagnostics:
+- SMG0001, 6, 14, "UnitTestStateMachine"
+---
 
-using Twia.StateMachine;
+#pragma warning disable CS1591
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 
 [StateMachine]
-public class UnitTestEmptyStateMachine
+public class UnitTestStateMachine
 {
 }

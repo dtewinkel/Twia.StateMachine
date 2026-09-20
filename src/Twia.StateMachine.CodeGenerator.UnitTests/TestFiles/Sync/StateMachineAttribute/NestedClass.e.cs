@@ -19,6 +19,7 @@ public partial class GrandParentClass
             /// </remarks>
             public enum State
             {
+                /// <summary>The state machine is in the 'Off' state.</summary>
                 Off = 1
             }
 
@@ -32,6 +33,8 @@ public partial class GrandParentClass
             private const UnitTestStateMachine.State __{{GeneratedId}}_StateUndefined = (UnitTestStateMachine.State)0;
 
             private UnitTestStateMachine.State __{{GeneratedId}}_CurrentState = __{{GeneratedId}}_StateUndefined;
+
+            private bool __{{GeneratedId}}_IsInitialized = false;
 
             private __{{GeneratedId}}_Trigger __{{GeneratedId}}_LastTrigger = __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Undefined;
 
@@ -58,20 +61,22 @@ public partial class GrandParentClass
             /// Initialize the state machine before it is used.
             /// </summary>
             /// <remarks>
-            /// The state machine must be initialize once (and only once) before any of the other generated methods and properties can be used.
+            /// The state machine must be initialized once (and only once) before any of the other generated methods and properties can be used.
             /// </remarks>
             /// <exception cref="global::System.InvalidOperationException">
-            /// InitializeStateMachine() can only be called one in the life of a state machine
+            /// InitializeStateMachine() can only be called once in the life of a state machine
             /// </exception>
             public void InitializeStateMachine()
             {
-                if (__{{GeneratedId}}_CurrentState != __{{GeneratedId}}_StateUndefined)
+                if (__{{GeneratedId}}_IsInitialized)
                 {
-                    throw new global::System.InvalidOperationException("'InitializeStateMachine()' can only be called once in the lifecycle of an instance.");
+                    throw new global::System.InvalidOperationException("'InitializeStateMachine()' can only be called once in the lifecycle of a state machine instance.");
                 }
 
                 // Move to initial state 'Off'.
                 __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.Off, "Initial");
+
+                __{{GeneratedId}}_IsInitialized = true;
             }
 
             public partial void ButtonPressed()
@@ -83,7 +88,7 @@ public partial class GrandParentClass
 
             private void __{{GeneratedId}}_AssertIsInitialized()
             {
-                if (__{{GeneratedId}}_CurrentState == __{{GeneratedId}}_StateUndefined)
+                if (!__{{GeneratedId}}_IsInitialized)
                 {
                     throw new global::System.InvalidOperationException("The state machine is not initialized yet. Call 'InitializeStateMachine()' on the UnitTestStateMachine instance before using it.");
                 }

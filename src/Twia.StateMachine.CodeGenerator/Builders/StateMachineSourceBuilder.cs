@@ -1,8 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using System.CodeDom.Compiler;
 using System.Diagnostics;
-using System.Globalization;
 using System.Text;
 using Twia.StateMachine.CodeGenerator.Builders.Sync;
 using Twia.StateMachine.CodeGenerator.Declarations;
@@ -13,6 +11,10 @@ public static class StateMachineSourceBuilder
 {
     public static void AddSource(SourceProductionContext context, StateMachineDeclaration declaration)
     {
+        if (!declaration.CanBeGenerated)
+        {
+            return;
+        }
         try
         {
             using var document = new CSharpDocumentWriter();
@@ -26,9 +28,9 @@ public static class StateMachineSourceBuilder
                 .Where(provider => provider.IsEnabled)
                 .ToList();
 
-            var triggersEnumBuilder = new TriggersEnumBuilder(document, triggersBuilder, triggerProviders);
+            var triggersEnumBuilder = new TriggersEnumBuilder(document, triggersBuilder, triggerProviders, statesBuilder);
             var observableBuilder = new ObservableBuilder(document, declaration, classCommonBuilder, statesBuilder);
-            var statesManagementBuilder = new StatesManagementBuilder(document, statesBuilder, triggersBuilder, afterTransitionsBuilder, observableBuilder);
+            var statesManagementBuilder = new StatesManagementBuilder(document, declaration, statesBuilder, triggersBuilder, afterTransitionsBuilder, observableBuilder, classCommonBuilder);
 
             var builders = new List<BuilderBase>
             {
@@ -52,7 +54,7 @@ public static class StateMachineSourceBuilder
             Debug.Assert(document.Indent == 0);
 
             var hintName = $"{declaration.HintNameForSource}_StateMachine.g.cs";
-            context.AddSource(hintName, SourceText.From(document.InnerWriter.ToString() ?? "", Encoding.UTF8));
+            context.AddSource(hintName, SourceText.From(document.InnerWriter.ToString() ?? "<Geen>", Encoding.UTF8));
         }
         catch (Exception e)
         {

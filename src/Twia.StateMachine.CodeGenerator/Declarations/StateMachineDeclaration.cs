@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Data;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Twia.StateMachine.CodeGenerator.Declarations;
@@ -34,6 +35,8 @@ public sealed partial record StateMachineDeclaration : ClassDeclaration
             Methods.Add(new MethodDeclaration((MethodDeclarationSyntax)methodNode, method, attributes));
         }
     }
+
+    public bool CanBeGenerated => IsPartial && Parent is not ContainingClassDeclaration { CanBeGenerated: false };
 
     [SequenceEquality]
     public List<MethodDeclaration> Methods { get; } = [];

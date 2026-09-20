@@ -20,4 +20,7 @@ public sealed partial record ContainingClassDeclaration : ParentDeclaration
 
     [IgnoreEquality]
     public override string HintNameForSource => $"{(Parent is not null ? $"{Parent.HintNameForSource}." : "")}{ClassDeclaration.Name}";
+
+    public bool CanBeGenerated => ClassDeclaration.IsPartial && Parent is not ContainingClassDeclaration { CanBeGenerated: false };
+
 }

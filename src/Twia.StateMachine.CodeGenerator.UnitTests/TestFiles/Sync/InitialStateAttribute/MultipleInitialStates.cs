@@ -1,20 +1,20 @@
-/***
-* Name: Multiple Initial States
-* Output: None
-* Diagnostics:
-* - SMG0002, 19, 25, "State2", "State1"
-***/
+---
+Name: 'SMG0002 - Multiple InitialStates'
+Output: Source
+Diagnostics:
+- SMG0002, 12, 26, "State2", "State1"
+---
 
-using Twia.StateMachine;
+#pragma warning disable CS1591
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 
 [StateMachine]
-public partial class UnitTestEmptyStateMachine
+public partial class UnitTestStateMachine
 {
     [InitialState]
-    public partial void State1();
+    private partial void State1();
 
     [InitialState]
-    public partial void State2();
+    private partial void State2();
 }

@@ -304,8 +304,8 @@ In addition to the states and trigger, the following public methods, types and p
 
 - Method `void InitializeStateMachine()`. Initializes the state machine and brings it to the initial state.
 - Enum `State`, embedded in the state machine class. Contains all states of the state machine as enum members.
-  Enum `State` is only generated if at least on of the `StateAccessible` and `Observable` parameters of the `StateMachineAttribute` is `true`.
-- Raad-only property `State CurrentState { get; }`. Returns the current state of the state machine.
+  Enum `State` is only generated as a public type if at least one of the `StateAccessible` and `Observable` parameters of the `StateMachineAttribute` is `true`.
+- Read-only property `State CurrentState { get; }`. Returns the current state of the state machine.
   Property `CurrentState` is only generated if the `StateAccessible` parameter of the `StateMachineAttribute` is `true`.
 - Event `event EventHandler<StateChangedEventArgs<TState>>? OnStateChanged;`. Event to be notified about state changes. 
   Event `OnStateChanged` is only generated if the `Observable` parameter of the `StateMachineAttribute` is `true`.

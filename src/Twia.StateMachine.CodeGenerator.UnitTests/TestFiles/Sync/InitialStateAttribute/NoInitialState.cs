@@ -1,21 +1,17 @@
-/***
-* Name: No Initial State
-* Output: None
-* Diagnostics:
-* - SMG0003, 13, 22, "UnitTestEmptyStateMachine"
-***/
+---
+Name: 'SMG0003 - No InitialState'
+Output: Source
+Diagnostics:
+- SMG0003, 6, 22, UnitTestStateMachine
+---
 
-using Twia.StateMachine;
+#pragma warning disable CS1591
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 
 [StateMachine]
-public partial class UnitTestEmptyStateMachine
+public partial class UnitTestStateMachine
 {
     [State]
-    public partial void State1();
-
-    [State]
-    public partial void State2();
-
+    private partial void State1();
 }

@@ -39,12 +39,16 @@ public class CSharpDocumentWriter(int capacity = 10000)
         return false;
     }
 
-    public void AddEnumMembers(List<string> members, bool moreToFollow = false, int? firstValue = null)
+    public void AddEnumMembers(List<string> members, bool moreToFollow = false, int? firstValue = null, string? summaryTemplate = null)
     {
         var count = members.Count;
         var position = 1;
         foreach (var member in members)
         {
+            if(summaryTemplate != null)
+            {
+                WriteLine($"/// <summary>{string.Format(summaryTemplate, member)}</summary>");
+            }
             Write($"{member}");
             if (firstValue.HasValue && position == 1)
             {

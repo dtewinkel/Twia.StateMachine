@@ -1,13 +1,13 @@
-/***
-* Name: StateMachine attribute On Record Type
-* Output: None
-***/
+---
+Name: StateMachine attribute On Record Type
+Output: None
+---
 
-using Twia.StateMachine;
+#pragma warning disable CS1591
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 
 [StateMachine]
-public partial record UnitTestEmptyStateMachine
+public partial record UnitTestStateMachine
 {
 }

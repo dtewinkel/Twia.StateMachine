@@ -1,5 +1,4 @@
-﻿using System.CodeDom.Compiler;
-using System.Reflection;
+﻿using System.Reflection;
 using Twia.StateMachine.CodeGenerator.Declarations;
 
 namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
@@ -23,6 +22,8 @@ public class ClassCommonBuilder
 
     public string FullStateMachineTypeName { get; private set; } = "";
 
+
+
     public ClassCommonBuilder(CSharpDocumentWriter document, StateMachineDeclaration declaration)
     {
         _document = document;
@@ -34,8 +35,11 @@ public class ClassCommonBuilder
         _generatorVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "Unknown";
 
         _privatePrefix = $"__{StateMachineName}_{_randomIdInPrefix}_";
+        AssertIsInitializedMethodName = ToPrivateName("AssertIsInitialized");
     }
 
+    public string AssertIsInitializedMethodName { get; }
+    
     public string ToPrivateName(string name) => $"{_privatePrefix}{name}";
 
     public void StartClass()

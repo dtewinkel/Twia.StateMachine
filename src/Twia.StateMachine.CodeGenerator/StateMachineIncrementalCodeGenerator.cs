@@ -20,8 +20,10 @@ public class StateMachineIncrementalCodeGenerator: IIncrementalGenerator
     private static void AddSource(SourceProductionContext context, StateMachineDeclaration declaration)
     {
         var validator = new StateMachineValidator();
-        validator.IsDeclarationValid(context, declaration);
-        StateMachineSourceBuilder.AddSource(context, declaration);
+        if (validator.IsDeclarationValid(context, declaration))
+        {
+            StateMachineSourceBuilder.AddSource(context, declaration);
+        }
     }
 
 

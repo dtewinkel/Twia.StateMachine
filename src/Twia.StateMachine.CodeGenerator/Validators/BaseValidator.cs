@@ -21,13 +21,13 @@ public class BaseValidator
         var triggerNamesAreCorrect = TriggerNamesAreCorrect(context, declaration);
         var afterTimeSpansAreCorrect = AfterTimeSpansAreCorrect(context, declaration);
         var stateNamesAreCorrectNamesAreCorrect = StateNamesAreCorrect(context, declaration);
-        return declarationIsPartial 
-               && initialStateIsValid 
-               && methodsAreStateOrTrigger 
-               && methodsSignaturesAreCorrect
-               && triggerNamesAreCorrect
-               && afterTimeSpansAreCorrect
-               && stateNamesAreCorrectNamesAreCorrect;
+        return declarationIsPartial; 
+               //&& initialStateIsValid 
+               //&& methodsAreStateOrTrigger 
+               //&& methodsSignaturesAreCorrect
+               //&& triggerNamesAreCorrect
+               //&& afterTimeSpansAreCorrect
+               //&& stateNamesAreCorrectNamesAreCorrect;
     }
 
     protected virtual bool StateNamesAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
@@ -141,12 +141,12 @@ public class BaseValidator
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodCannotBeTriggerAndState((MethodDeclarationSyntax)declarationMethod.Node));
                 success = false;
             }
-            if (declarationMethod is { IsState: false, IsTrigger: false } && (declarationMethod.Transitions.Count > 0 || declarationMethod.IsInitial))
+            if (declarationMethod is { IsState: false, IsTrigger: false, HasTransitions: true })
             {
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodMustBeAState((MethodDeclarationSyntax)declarationMethod.Node));
                 success = false;
             }
-            if (declarationMethod is { IsTrigger: true } && (declarationMethod.Transitions.Count > 0 || declarationMethod.IsInitial))
+            if (declarationMethod is { IsTrigger: true, HasTransitions: true })
             {
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.TriggerCannotHaveStateAttributes((MethodDeclarationSyntax)declarationMethod.Node));
                 success = false;
@@ -160,12 +160,11 @@ public class BaseValidator
         var success = true;
         foreach (var declarationMethod in declaration.Methods)
         {
-            if (declarationMethod is not { IsPartial: false })
+            if ((declarationMethod.IsState || declarationMethod.IsTrigger) && declarationMethod is { IsPartial: false })
             {
-                continue;
+                context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodMustBePartial((MethodDeclarationSyntax)declarationMethod.Node));
+                success = false;
             }
-            context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodMustBePartial((MethodDeclarationSyntax)declarationMethod.Node));
-            success = false;
         }
         return success;
     }

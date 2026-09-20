@@ -11,12 +11,12 @@ public class StateMachineValidator : BaseValidator
         var success = base.MethodsSignaturesAreCorrect(context, declaration);
         foreach (var declarationMethod in declaration.Methods)
         { 
-            if (declarationMethod.ReturnType is not "void")
+            if ((declarationMethod.IsState || declarationMethod.IsTrigger) && declarationMethod.ReturnType is not "void")
             {
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodMustHaveVoidReturnType((MethodDeclarationSyntax)declarationMethod.Node));
                 success = false;
             }
-            if (declarationMethod.Parameters.Count > 0)
+            if ((declarationMethod.IsState || declarationMethod.IsTrigger) && declarationMethod.HasParameters)
             {
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodMustHaveNoParameters((MethodDeclarationSyntax)declarationMethod.Node));
                 success = false;

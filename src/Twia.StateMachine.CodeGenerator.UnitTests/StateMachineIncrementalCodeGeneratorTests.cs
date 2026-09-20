@@ -1,12 +1,12 @@
+using ktsu.Frontmatter;
+using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Twia.StateMachine.CodeGenerator.UnitTests.Verifiers;
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
@@ -15,7 +15,6 @@ namespace Twia.StateMachine.CodeGenerator.UnitTests;
 public sealed class StateMachineIncrementalCodeGeneratorTests
 {
     private readonly TestContext _testContext;
-
     private readonly IncrementalGeneratorVerifier<StateMachineIncrementalCodeGenerator> _verifier = new(typeof(StateMachineIncrementalCodeGeneratorTests));
 
     public StateMachineIncrementalCodeGeneratorTests(TestContext testContext)
@@ -24,18 +23,19 @@ public sealed class StateMachineIncrementalCodeGeneratorTests
         _verifier.AddAdditionalFileReferences("Twia.StateMachine.dll");
     }
 
-    private static readonly string _initialStateTestDir = Path.Combine("TestFiles", "Sync");
+    private static readonly string _unitTestFilesDir = Path.Combine("TestFiles");
 
     public static IEnumerable<object[]> InitialStateTestCases()
     {
-        var dir = Path.Combine(AppContext.BaseDirectory, _initialStateTestDir);
+        var dir = Path.Combine(AppContext.BaseDirectory, _unitTestFilesDir);
         if (!Directory.Exists(dir))
         {
             yield break;
         }
 
         foreach (var file in Directory.EnumerateFiles(dir, "*.cs", SearchOption.AllDirectories)
-            .Where(f => !f.EndsWith(".e.cs", StringComparison.OrdinalIgnoreCase))
+            .Where(f => !f.EndsWith(".e.cs", StringComparison.OrdinalIgnoreCase) 
+                           && !f.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase))
             .OrderBy(f => f))
         {
             var relative = Path.GetRelativePath(dir, file);
@@ -43,140 +43,156 @@ public sealed class StateMachineIncrementalCodeGeneratorTests
         }
     }
 
-    public static string InitialStateDisplayName(MethodInfo methodInfo, object[] data)
+    public static string InitialStateDisplayName(MethodInfo _, object[] data)
     {
-        var relative = (string)data[0];
-        var path = Path.Combine(AppContext.BaseDirectory, _initialStateTestDir, relative);
-        var subDir = Path.GetDirectoryName(relative)?.Replace(Path.DirectorySeparatorChar, '/') ?? string.Empty;
-        var name = Path.GetFileNameWithoutExtension(relative);
+        var relativeFileName = (string)data[0];
+        var path = Path.Combine(AppContext.BaseDirectory, _unitTestFilesDir, relativeFileName);
+        var subDir = Path.GetDirectoryName(relativeFileName)?.Replace($"{Path.DirectorySeparatorChar}", " - ") ?? string.Empty;
+        var name = Path.GetFileNameWithoutExtension(relativeFileName);
         if (File.Exists(path))
         {
-            var header = ParseHeader(File.ReadAllText(path));
-            if (!string.IsNullOrWhiteSpace(header.Name))
+            var testFileInfo = ParseTestSource(relativeFileName, false);
+            if (testFileInfo is not null)
             {
-                name = header.Name!;
+                name = testFileInfo.Name;
             }
         }
         return string.IsNullOrEmpty(subDir) ? name : $"{subDir}: {name}";
     }
 
     [TestMethod]
-    [DynamicData(
-        nameof(InitialStateTestCases),
-        DynamicDataDisplayName = nameof(InitialStateDisplayName))]
-    public async Task Generator_FromSourceFile_GeneratesCorrectResult(string fileName)
+    [DynamicData(nameof(InitialStateTestCases), DynamicDataDisplayName = nameof(InitialStateDisplayName))]
+    public async Task Generator_FromSourceFile_GeneratesCorrectResult(string relativeFileName)
     {
-        var path = Path.Combine(AppContext.BaseDirectory, _initialStateTestDir, fileName);
-        var code = await File.ReadAllTextAsync(path, _testContext.CancellationToken);
-        var header = ParseHeader(code);
+        var testInfo = ParseTestSource(relativeFileName, true)!;
 
-        if (!header.HasHeader)
-        {
-            Assert.Fail($"Test file '{fileName}' is missing a header block (/*** ... ***/).");
-        }
-
-        var output = header.Output ?? "None";
-        if (!string.Equals(output, "Source", StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(output, "None", StringComparison.OrdinalIgnoreCase))
-        {
-            Assert.Fail($"Test file '{fileName}' has invalid Output '{output}'. Expected 'Source' or 'None'.");
-        }
-
-        if (string.Equals(output, "Source", StringComparison.OrdinalIgnoreCase))
-        {
-            var expectedPath = Path.ChangeExtension(path, null) + ".e.cs";
-            if (!File.Exists(expectedPath))
-            {
-                Assert.Fail($"Expected generated source file '{Path.GetFileName(expectedPath)}' is missing for test '{fileName}'.");
-            }
-
-            var expectedCode = await File.ReadAllTextAsync(expectedPath, _testContext.CancellationToken);
-            if (header.Diagnostics.Count == 0)
-            {
-                await _verifier.VerifyGeneratorAsync([code], ("*UnitTestEmptyStateMachine*", expectedCode));
-            }
-            else
-            {
-                await _verifier.VerifyGeneratorAsyncWithDiagnostics([code], [.. header.Diagnostics], ("*UnitTestEmptyStateMachine*", expectedCode));
-            }
-            return;
-        }
-
-        if (header.Diagnostics.Count == 0)
-        {
-            await _verifier.VerifyGeneratorAsyncWithEmptyResult([code]);
-        }
-        else
-        {
-            await _verifier.VerifyGeneratorAsyncWithOnlyDiagnostics([code], [.. header.Diagnostics]);
-        }
+        _verifier.OutputFile = testInfo.OutputFile;
+        await _verifier.VerifyGeneratorAsync([testInfo.Code], [.. testInfo.Diagnostics], [.. testInfo.GeneratedSources], _testContext.CancellationToken);
     }
 
-    private sealed record HeaderInfo(bool HasHeader, string? Name, string? Output, List<DiagnosticResult> Diagnostics);
+    private sealed record TestFileInfo(string Name, string Code, string? OutputFile, List<DiagnosticResult> Diagnostics, List<(string, string)> GeneratedSources);
 
-    private static readonly Regex _headerBlockRegex = new(
-        @"/\*\*\*(?<body>.*?)\*\*\*/",
-        RegexOptions.Singleline | RegexOptions.Compiled);
-
-    private static readonly Regex _nameRegex = new(
-        @"^\s*\*\s*Name\s*:\s*(?<name>.+?)\s*$",
-        RegexOptions.Multiline | RegexOptions.Compiled);
-
-    private static readonly Regex _outputRegex = new(
-        @"^\s*\*\s*Output\s*:\s*(?<output>.+?)\s*$",
-        RegexOptions.Multiline | RegexOptions.Compiled);
-
-    private static readonly Regex _diagnosticLineRegex = new(
-        @"^\s*\*\s*-\s*(?<id>SMG\d+)\s*,\s*(?<line>\d+)\s*,\s*(?<column>\d+)(?<args>(?:\s*,\s*""(?:[^""\\]|\\.)*"")*)\s*$",
-        RegexOptions.Multiline | RegexOptions.Compiled);
-
-    private static readonly Regex _quotedArgRegex = new(
-        @"""(?<value>(?:[^""\\]|\\.)*)""",
-        RegexOptions.Compiled);
-
-    private static HeaderInfo ParseHeader(string source)
+    private enum OutputType
     {
+        None = 1,
+        Source
+    }
+
+    private static TestFileInfo? ParseTestSource(string relativeFileName, bool failOnError)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, _unitTestFilesDir, relativeFileName);
+
+        var codeWithFrontMatter = File.ReadAllText(path);
+        var frontmatter = Frontmatter.ExtractFrontmatter(codeWithFrontMatter);
+
+        if (frontmatter is null)
+        {
+            if (failOnError)
+            {
+                Assert.Fail($"Test file '{relativeFileName}' is missing frontmatter.");
+            }
+
+            return null;
+        }
+
+        var code = Frontmatter.RemoveFrontmatter(codeWithFrontMatter);
+
+        if (frontmatter["Name"] is not string name)
+        {
+            if (failOnError)
+            {
+                Assert.Fail(
+                    $"Test file '{relativeFileName}' has no Name set. Expected 'Name: ' followed by a descriptive name.");
+            }
+
+            return null;
+        }
+
+        if (frontmatter["Output"] is not string outputText)
+        {
+            if (failOnError)
+            {
+                Assert.Fail(
+                    $"Test file '{relativeFileName}' has no Output set, or output is invalid. Expected 'Output: ' followed by 'Source' or 'None'.");
+            }
+
+            return null;
+        }
+
+        if (!Enum.TryParse<OutputType>(outputText, ignoreCase: true, out var output))
+        {
+            if (failOnError)
+            {
+                Assert.Fail(
+                    $"Test file '{relativeFileName}' has invalid Output '{outputText}'. Expected 'Source' or 'None'.");
+            }
+
+            return null;
+        }
+
         var diagnostics = new List<DiagnosticResult>();
-        string? name = null;
-
-        var blockMatch = _headerBlockRegex.Match(source);
-        if (!blockMatch.Success)
+        if (frontmatter.TryGetValue("Diagnostics", out var value))
         {
-            return new HeaderInfo(false, name, null, diagnostics);
+            var diagnosticsMatter = (IEnumerable<object?>)value;
+
+            var index = 1;
+            foreach (var diagnostic in diagnosticsMatter)
+            {
+                if (diagnostic is not string diagnosticString)
+                {
+                    diagnostics.Add(DiagnosticResult
+                        .CompilerError("<invalid>")
+                        .WithLocation(index, 1)
+                        .WithArguments(diagnostic?.GetType().FullName ?? "<null>"));
+                    continue;
+                }
+
+                var parts = diagnosticString.Split(',').Select(p => p.Trim()).ToArray();
+                if (parts.Length < 3)
+                {
+                    diagnostics.Add(DiagnosticResult
+                        .CompilerError("<invalid>")
+                        .WithLocation(index, 2)
+                        .WithArguments(diagnosticString));
+                    continue;
+                }
+
+                var diagnosticId = new string([.. parts[0].Where(c => !char.IsWhiteSpace(c))]);
+                var result = DiagnosticResult.CompilerError(diagnosticId);
+                if (int.TryParse(parts[1], out var line) && int.TryParse(parts[2], out var column))
+                {
+                    result = result.WithLocation(line, column);
+                }
+
+                if (parts.Length > 3)
+                {
+                    result = result.WithArguments([.. parts[3..].Select(p => p.Trim('"'))]);
+                }
+
+                diagnostics.Add(result);
+            }
         }
 
-        var body = blockMatch.Groups["body"].Value;
-
-        var nameMatch = _nameRegex.Match(body);
-        if (nameMatch.Success)
+        List<(string, string)> generatedSources = [];
+        if (output == OutputType.Source)
         {
-            name = nameMatch.Groups["name"].Value.Trim();
+            var expectedPath = Path.ChangeExtension(path, ".e.cs");
+            if (!File.Exists(expectedPath))
+            {
+                if (failOnError)
+                {
+                    Assert.Fail($"Expected generated source file '{Path.GetFileName(expectedPath)}' is missing for test '{relativeFileName}'.");
+                }
+                return null;
+            }
+
+            var expectedCode = File.ReadAllText(expectedPath);
+            generatedSources.Add(("*UnitTestStateMachine*", expectedCode));
         }
 
-        string? output = null;
-        var outputMatch = _outputRegex.Match(body);
-        if (outputMatch.Success)
-        {
-            output = outputMatch.Groups["output"].Value.Trim();
-        }
-
-        foreach (Match match in _diagnosticLineRegex.Matches(body))
-        {
-            var id = match.Groups["id"].Value;
-            var line = int.Parse(match.Groups["line"].Value, System.Globalization.CultureInfo.InvariantCulture);
-            var column = int.Parse(match.Groups["column"].Value, System.Globalization.CultureInfo.InvariantCulture);
-            var args = _quotedArgRegex.Matches(match.Groups["args"].Value)
-                .Select(m => Regex.Unescape(m.Groups["value"].Value))
-                .Cast<object>()
-                .ToArray();
-
-            var result = DiagnosticResult
-                .CompilerError(id)
-                .WithLocation(line, column)
-                .WithArguments(args);
-            diagnostics.Add(result);
-        }
-
-        return new HeaderInfo(true, name, output, diagnostics);
+        var outputFile = Path.ChangeExtension(path, ".g.cs");
+        Console.WriteLine($"Output in file: {outputFile}");
+        Console.WriteLine();
+        return new TestFileInfo(name, code, outputFile, [.. diagnostics], [.. generatedSources]);
     }
 }
