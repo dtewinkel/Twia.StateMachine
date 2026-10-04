@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Transactions;
 using Twia.StateMachine.CodeGenerator.Declarations;
 
 namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
@@ -7,6 +7,7 @@ public class StatesManagementBuilder : BuilderBase
 {
     private readonly CSharpDocumentWriter _document;
     private readonly StatesBuilder _statesBuilder;
+    private readonly TriggerMethodsProvider _triggerMethodsProvider;
     private readonly TriggersBuilder _triggersBuilder;
     private readonly AfterTransitionsBuilder _afterTransitionsBuilder;
     private readonly ObservableBuilder _observableBuilder;
@@ -17,12 +18,13 @@ public class StatesManagementBuilder : BuilderBase
 
 
     public StatesManagementBuilder(CSharpDocumentWriter document, StateMachineDeclaration declaration,
-        StatesBuilder statesBuilder, TriggersBuilder triggersBuilder,
+        StatesBuilder statesBuilder, TriggerMethodsProvider triggerMethodsProvider, TriggersBuilder triggersBuilder,
         AfterTransitionsBuilder afterTransitionsBuilder, ObservableBuilder observableBuilder,
         ClassCommonBuilder classCommonBuilder)
     {
         _document = document;
         _statesBuilder = statesBuilder;
+        _triggerMethodsProvider = triggerMethodsProvider;
         _triggersBuilder = triggersBuilder;
         _afterTransitionsBuilder = afterTransitionsBuilder;
         _observableBuilder = observableBuilder;
@@ -108,7 +110,7 @@ public class StatesManagementBuilder : BuilderBase
         _afterTransitionsBuilder.AddClearTimers();
         _observableBuilder.AddObserveStateChange(stateParameterName, reasonParameterName);
         _document.WriteLine($"{_statesBuilder.StateFieldName} = {stateParameterName};");
-        _document.WriteLine($"{_triggersBuilder.InvokeTriggerMethodName}({_triggersBuilder.TriggerEnumTypeName}.{_triggersBuilder.EntryTriggerName});");
+        _triggersBuilder.AddInvokeTrigger($"{_triggersBuilder.TriggerEnumTypeName}.{_triggersBuilder.EntryTriggerName}");
         _document.WriteLineBlockClose();
     }
 
@@ -179,8 +181,9 @@ public class StatesManagementBuilder : BuilderBase
                 var hasExitTransactions = onExitTransitions.Count > 0;
 
                 var triggerTransitions = state.Transitions
-                    .Where(transition =>
-                        transition.TransitionType is TransitionType.OnTrigger or TransitionType.Internal).ToList();
+                    .Where(transition => transition.TransitionType is TransitionType.OnTrigger or TransitionType.Internal)
+                    .Where(transition => _triggerMethodsProvider.TriggerExists(transition.Trigger))
+                    .ToList();
                 var hasTriggerTransactions = triggerTransitions.Count > 0;
 
                 var triggerlessTransitions = state.Transitions
@@ -242,7 +245,7 @@ public class StatesManagementBuilder : BuilderBase
 
                         if (hasTriggerlessTransitions)
                         {
-                            foreach (var transition in triggerlessTransitions)
+                            foreach (var transition in triggerlessTransitions.Where(transition => _statesBuilder.StateExists(transition.TargetState)))
                             {
                                 _document.WriteConditionActionAndTransition(transition, onExitCall,
                                     (document, declaration) =>
@@ -260,7 +263,8 @@ public class StatesManagementBuilder : BuilderBase
 
                     if (hasTriggerTransactions)
                     {
-                        var triggersGrouped = triggerTransitions.GroupBy(trigger => trigger.Trigger);
+                        var triggersGrouped = triggerTransitions
+                                .GroupBy(trigger => trigger.Trigger);
                         foreach (var trigger in triggersGrouped)
                         {
                             first = _document.WriteSeparatorLine(first);
@@ -271,13 +275,17 @@ public class StatesManagementBuilder : BuilderBase
                                 switch (transition.TransitionType)
                                 {
                                     case TransitionType.OnTrigger:
-                                        _document.WriteConditionActionAndTransition(transition, onExitCall,
-                                            (document, declaration) =>
-                                            {
-                                                document.WriteLine(
-                                                    $"{_statesBuilder.EnterStateMethodName}({_statesBuilder.StateFullTypeName}.{declaration.TargetState}, \"Trigger: {trigger.Key}\");");
-                                            }
-                                        );
+                                        if (_statesBuilder.StateExists(transition.TargetState))
+                                        {
+                                            _document.WriteConditionActionAndTransition(transition, onExitCall,
+                                                (document, declaration) =>
+                                                {
+                                                    document.WriteLine(
+                                                        $"{_statesBuilder.EnterStateMethodName}({_statesBuilder.StateFullTypeName}.{declaration.TargetState}, \"Trigger: {trigger.Key}\");");
+                                                }
+                                            );
+                                        }
+
                                         break;
 
                                     case TransitionType.Internal:

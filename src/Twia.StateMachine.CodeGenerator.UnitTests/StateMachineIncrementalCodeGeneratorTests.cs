@@ -60,7 +60,7 @@ public sealed class StateMachineIncrementalCodeGeneratorTests
         return string.IsNullOrEmpty(subDir) ? name : $"{subDir}: {name}";
     }
 
-    [TestMethod]
+        [TestMethod]
     [DynamicData(nameof(InitialStateTestCases), DynamicDataDisplayName = nameof(InitialStateDisplayName))]
     public async Task Generator_FromSourceFile_GeneratesCorrectResult(string relativeFileName)
     {

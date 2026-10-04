@@ -99,7 +99,7 @@ public static class StateMachineGeneratorDiagnostics
     private static readonly DiagnosticDescriptor _stateMustBeDefinedDescriptor = new(
         "SMG0011",
         "State must be defined",
-        "The target State '{0}' used for state method '{1}' must be defined",
+        "The target State '{0}' used for the transition in state method '{1}' must be defined",
         "Generator",
         DiagnosticSeverity.Error,
         true,

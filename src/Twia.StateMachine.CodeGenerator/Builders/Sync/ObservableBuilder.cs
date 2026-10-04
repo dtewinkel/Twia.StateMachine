@@ -1,12 +1,10 @@
-﻿using System.CodeDom.Compiler;
-using Twia.StateMachine.CodeGenerator.Declarations;
+﻿using Twia.StateMachine.CodeGenerator.Declarations;
 
 namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
 
 public class ObservableBuilder : BuilderBase
 {
     private readonly CSharpDocumentWriter _document;
-    private readonly StateMachineDeclaration _declaration;
     private readonly StatesBuilder _statesBuilder;
     private readonly string _stateChangedMethodName;
 
@@ -14,13 +12,13 @@ public class ObservableBuilder : BuilderBase
     public ObservableBuilder(CSharpDocumentWriter document, StateMachineDeclaration declaration, ClassCommonBuilder classCommonBuilder, StatesBuilder statesBuilder)
     {
         _document = document;
-        _declaration = declaration;
+        IsEnabled = declaration.Observable;
         _statesBuilder = statesBuilder;
 
         _stateChangedMethodName = classCommonBuilder.ToPrivateName("StateChanged");
     }
 
-    public override bool IsEnabled => _declaration.Observable;
+    public override bool IsEnabled { get; }
 
     public override bool AddPrivateMethods()
     {

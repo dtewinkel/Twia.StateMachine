@@ -3,7 +3,7 @@ Name: StateMachine with conditions and actions on transitions
 Output: Source
 ---
 
-using Twia.StateMachine;
+#pragma warning disable CS1591
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 

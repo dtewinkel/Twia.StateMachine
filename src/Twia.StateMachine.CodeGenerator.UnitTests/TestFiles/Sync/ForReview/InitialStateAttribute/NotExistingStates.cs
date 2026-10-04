@@ -7,7 +7,7 @@ Diagnostics:
 - SMG0011, 18, 25, "State6", "State3"
 ---
 
-using Twia.StateMachine;
+#pragma warning disable CS1591
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 

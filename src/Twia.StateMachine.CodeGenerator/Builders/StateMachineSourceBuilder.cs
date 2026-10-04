@@ -15,22 +15,24 @@ public static class StateMachineSourceBuilder
         {
             return;
         }
+
         try
         {
             using var document = new CSharpDocumentWriter();
 
+            var triggerMethodsProvider = new TriggerMethodsProvider(declaration);
             var classCommonBuilder = new ClassCommonBuilder(document, declaration);
             var statesBuilder = new StatesBuilder(document, declaration, classCommonBuilder);
-            var triggersBuilder = new TriggersBuilder(document, declaration, classCommonBuilder, statesBuilder);
+            var triggersBuilder = new TriggersBuilder(document, triggerMethodsProvider, classCommonBuilder, statesBuilder);
             var afterTransitionsBuilder = new AfterTransitionsBuilder(document, declaration, classCommonBuilder, statesBuilder, triggersBuilder);
 
-            var triggerProviders = new List<ITriggersProvider> { triggersBuilder, afterTransitionsBuilder }
+            var triggerProviders = new List<ITriggersProvider> { triggerMethodsProvider, triggersBuilder, afterTransitionsBuilder }
                 .Where(provider => provider.IsEnabled)
                 .ToList();
 
             var triggersEnumBuilder = new TriggersEnumBuilder(document, triggersBuilder, triggerProviders, statesBuilder);
             var observableBuilder = new ObservableBuilder(document, declaration, classCommonBuilder, statesBuilder);
-            var statesManagementBuilder = new StatesManagementBuilder(document, declaration, statesBuilder, triggersBuilder, afterTransitionsBuilder, observableBuilder, classCommonBuilder);
+            var statesManagementBuilder = new StatesManagementBuilder(document, declaration, statesBuilder, triggerMethodsProvider, triggersBuilder, afterTransitionsBuilder, observableBuilder, classCommonBuilder);
 
             var builders = new List<BuilderBase>
             {

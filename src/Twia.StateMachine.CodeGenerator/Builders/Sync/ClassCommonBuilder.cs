@@ -111,4 +111,10 @@ public class ClassCommonBuilder
             _nestingLevel--;
         }
     }
+
+    public void AddAssertIsInitialized()
+    {
+        _document.WriteLine($"{AssertIsInitializedMethodName}();");
+        _document.WriteLineNoTabs();
+    }
 }

@@ -1,25 +1,22 @@
-﻿using Twia.StateMachine.CodeGenerator.Declarations;
-
-namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
+﻿namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
 
 public class TriggersBuilder : BuilderBase, ITriggersProvider
 {
     private readonly CSharpDocumentWriter _document;
+    private readonly TriggerMethodsProvider _triggerMethodsProvider;
     private readonly ClassCommonBuilder _classCommonBuilder;
     private readonly StatesBuilder _statesBuilder;
-
-    private readonly MethodDeclaration[] _triggerMethods;
     private readonly bool _hasStates;
     private readonly bool _hasTriggers;
 
-    public TriggersBuilder(CSharpDocumentWriter document, StateMachineDeclaration declaration, ClassCommonBuilder classCommonBuilder, StatesBuilder statesBuilder)
+    public TriggersBuilder(CSharpDocumentWriter document, TriggerMethodsProvider triggerMethodsProvider, ClassCommonBuilder classCommonBuilder, StatesBuilder statesBuilder)
     {
         _document = document;
+        _triggerMethodsProvider = triggerMethodsProvider;
         _classCommonBuilder = classCommonBuilder;
         _statesBuilder = statesBuilder;
 
-        _triggerMethods = [.. declaration.Methods.Where(method => method.IsTrigger)];
-        _hasTriggers = _triggerMethods.Any(t => !_statesBuilder.TryGetState(t.Name, out _));
+        _hasTriggers = triggerMethodsProvider.TriggerNames.Any(name => !_statesBuilder.StateExists(name));
         _hasStates = statesBuilder.HasStates;
 
         UndefinedTrigger = classCommonBuilder.ToPrivateName("Undefined");
@@ -29,6 +26,9 @@ public class TriggersBuilder : BuilderBase, ITriggersProvider
         EntryTriggerName = classCommonBuilder.ToPrivateName("Entry");
 
         InvokeTriggerMethodName = classCommonBuilder.ToPrivateName("InvokeTrigger");
+
+        TriggerNames = [EntryTriggerName];
+        IsEnabled = triggerMethodsProvider.IsEnabled || _statesBuilder.HasStates;
     }
 
     public string UndefinedTrigger { get; }
@@ -41,9 +41,9 @@ public class TriggersBuilder : BuilderBase, ITriggersProvider
 
     public string LastTriggerFieldName { get; }
 
-    public override bool IsEnabled => _triggerMethods.Length > 0 || _statesBuilder.HasStates;
+    public override bool IsEnabled { get; }
 
-    public string[] GetTriggerNames() => [ .. _triggerMethods.Select(trigger => trigger.Name), EntryTriggerName ];
+    public string[] TriggerNames { get; }
 
     public override bool AddFields()
     {
@@ -67,9 +67,9 @@ public class TriggersBuilder : BuilderBase, ITriggersProvider
         var first = true;
         var triggersAdded = false;
 
-        foreach (var trigger in _triggerMethods)
+        foreach (var trigger in _triggerMethodsProvider.Triggers)
         {
-            var isAlsoState = _statesBuilder.TryGetState(trigger.Name, out _);
+            var isAlsoState = _statesBuilder.StateExists(trigger.Name);
 
             if (!isAlsoState && trigger.IsPartial)
             {
@@ -93,9 +93,8 @@ public class TriggersBuilder : BuilderBase, ITriggersProvider
                 _document.WriteLineBlockOpen();
                 if (_hasStates)
                 {
-                    _document.WriteLine($"{_classCommonBuilder.AssertIsInitializedMethodName}();");
-                    _document.WriteLineNoTabs();
-                    _document.WriteLine($"{InvokeTriggerMethodName}({TriggerEnumTypeName}.{trigger.Name});");
+                    _classCommonBuilder.AddAssertIsInitialized();
+                    AddInvokeTrigger($"{TriggerEnumTypeName}.{trigger.Name}");
                 }
 
                 if (trigger.ReturnType != CommonTypeNames.Void)
@@ -108,5 +107,10 @@ public class TriggersBuilder : BuilderBase, ITriggersProvider
         }
 
         return triggersAdded;
+    }
+
+    public void AddInvokeTrigger(string trigger)
+    {
+        _document.WriteLine($"{InvokeTriggerMethodName}({trigger});");
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.CodeDom.Compiler;
-
-namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
+﻿namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
 
 public class TriggersEnumBuilder : BuilderBase
 {
@@ -15,7 +13,7 @@ public class TriggersEnumBuilder : BuilderBase
         _triggersBuilder = triggersBuilder;
         _statesBuilder = statesBuilder;
 
-        _triggers = [ .. triggersProviders.Where(provider => provider.IsEnabled).SelectMany(provider => provider.GetTriggerNames()) ];
+        _triggers = [ .. triggersProviders.Where(provider => provider.IsEnabled).SelectMany(provider => provider.TriggerNames) ];
     }
 
     public override bool IsEnabled => _triggers.Count > 0 && _statesBuilder.HasStates;

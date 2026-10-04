@@ -7,7 +7,7 @@ Diagnostics:
 - SMG0012, 15, 25, "2 seconds", "State2"
 ---
 
-using Twia.StateMachine;
+#pragma warning disable CS1591
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 

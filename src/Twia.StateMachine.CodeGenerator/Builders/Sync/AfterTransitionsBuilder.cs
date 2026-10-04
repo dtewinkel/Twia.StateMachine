@@ -1,5 +1,4 @@
-﻿using System.CodeDom.Compiler;
-using System.Xml;
+﻿using System.Xml;
 using Twia.StateMachine.CodeGenerator.Declarations;
 
 namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
@@ -10,41 +9,49 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
     private readonly ClassCommonBuilder _classCommonBuilder;
     private readonly StatesBuilder _statesBuilder;
     private readonly TriggersBuilder _triggersBuilder;
-    private readonly Dictionary<string, List<TransitionDeclaration>> _transitions = [];
+    private readonly Dictionary<string, List<TransitionDeclaration>> _transitions;
     private readonly string _startTimerMethodName;
     private readonly string _timersBackingFieldName;
 
-    public AfterTransitionsBuilder(CSharpDocumentWriter document, StateMachineDeclaration declaration, ClassCommonBuilder classCommonBuilder, StatesBuilder statesBuilder, TriggersBuilder triggersBuilder)
+    public AfterTransitionsBuilder(CSharpDocumentWriter document, StateMachineDeclaration declaration,
+        ClassCommonBuilder classCommonBuilder, StatesBuilder statesBuilder, TriggersBuilder triggersBuilder)
     {
         _document = document;
         _classCommonBuilder = classCommonBuilder;
         _statesBuilder = statesBuilder;
         _triggersBuilder = triggersBuilder;
 
-        var states = declaration.Methods.Where(method => method.IsState).ToArray();
-
-        foreach (var state in states)
-        {
-            var afterTriggers = state.Transitions
-                .Where(transition => transition.TransitionType is TransitionType.AfterDelay or TransitionType.InternalAfter or TransitionType.InternalAfterEvery)
-                .ToList();
-            if (afterTriggers.Count > 0)
+        _transitions = declaration.Methods
+            .Where(method => method.IsState)
+            .Select(state => new
             {
-                _transitions.Add(state.Name, afterTriggers);
-            }
-        }
+                state.Name,
+                AfterTriggers = state.Transitions
+                    .Where(transition => transition.TransitionType
+                        is TransitionType.AfterDelay
+                        or TransitionType.InternalAfter
+                        or TransitionType.InternalAfterEvery)
+                    .ToList()
+            })
+            .Where(x => x.AfterTriggers.Count > 0)
+            .ToDictionary(x => x.Name, x => x.AfterTriggers);
 
         _timersBackingFieldName = _classCommonBuilder.ToPrivateName("Timers");
         _startTimerMethodName = _classCommonBuilder.ToPrivateName("StartTimer");
+
+        IsEnabled = _transitions.Count > 0;
+        TriggerNames = [.. _transitions.Values
+            .SelectMany(transitions => transitions
+                .Select(transition => ToFullAfterTriggerName(transition.Name)))];
     }
 
-    public string[] GetTriggerNames() => [.. _transitions.Values
-        .SelectMany(transitions => transitions
-            .Select(transition => ToFullAfterTriggerName(transition.Name)))];
+    public string[] TriggerNames { get; }
 
-    public override bool IsEnabled => _transitions.Count > 0;
+    public override bool IsEnabled { get; }
 
     private string ToFullAfterTriggerName(string name) => _classCommonBuilder.ToPrivateName(name);
+
+    private string ToFullyQualifiedAfterTriggerEnum(string name) => $"{_triggersBuilder.TriggerEnumTypeName}.{ToFullAfterTriggerName(name)}";
 
     public override bool AddFields()
     {
@@ -65,7 +72,7 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
         _document.WriteLineNoTabs();
         _document.WriteLine($"private void {timerCallback}(object? trigger)");
         _document.WriteLineBlockOpen();
-        _document.WriteLine($"{_triggersBuilder.InvokeTriggerMethodName}(({_triggersBuilder.TriggerEnumTypeName})trigger!);");
+        _triggersBuilder.AddInvokeTrigger($"({_triggersBuilder.TriggerEnumTypeName})trigger!");
         _document.WriteLineBlockClose();
         return true;
     }
@@ -99,20 +106,19 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
                     case TransitionType.AfterDelay:
                     case TransitionType.InternalAfter:
                         _document.WriteLine(
-                            $"{_startTimerMethodName}(\"{timeSpan}\", null, {_triggersBuilder.TriggerEnumTypeName}.{ToFullAfterTriggerName(transition.Name)});");
+                            $"{_startTimerMethodName}(\"{timeSpan}\", null, {ToFullyQualifiedAfterTriggerEnum(transition.Name)});");
                         break;
 
                     case TransitionType.InternalAfterEvery:
                         var initialDelay = ((InternalAfterEveryDeclaration)transition).InitialDelay;
                         var initialTimeSpan = string.IsNullOrWhiteSpace(initialDelay) ? timeSpan.ToString() : ParsePeriod(initialDelay).ToString();
                         _document.WriteLine(
-                            $"{_startTimerMethodName}(\"{initialTimeSpan}\", \"{timeSpan}\", {_triggersBuilder.TriggerEnumTypeName}.{ToFullAfterTriggerName(transition.Name)});");
+                            $"{_startTimerMethodName}(\"{initialTimeSpan}\", \"{timeSpan}\", {ToFullyQualifiedAfterTriggerEnum(transition.Name)});");
                         break;
                 }
             }
         }
     }
-
 
     private static TimeSpan ParsePeriod(string trigger)
     {
@@ -139,19 +145,23 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
             {
                 first = _document.WriteSeparatorLine(first);
                 _document.WriteLine(
-                    $"case {_triggersBuilder.TriggerEnumTypeName}.{ToFullAfterTriggerName(transition.Name)}:");
+                    $"case {ToFullyQualifiedAfterTriggerEnum(transition.Name)}:");
                 _document.Indent++;
                 switch (transition.TransitionType)
                 {
                     case TransitionType.AfterDelay:
-                        _document.WriteConditionActionAndTransition(transition, onExitCall,
-                            (document, declaration) =>
-                            {
-                                document.WriteLine(
-                                    $"{_statesBuilder.EnterStateMethodName}({_statesBuilder.StateFullTypeName}.{declaration.TargetState}, \"After: {declaration.Trigger}\");");
-                            }
-                        );
+                        if (_statesBuilder.StateExists(transition.TargetState))
+                        {
+                            _document.WriteConditionActionAndTransition(transition, onExitCall,
+                                (document, declaration) =>
+                                {
+                                    document.WriteLine(
+                                        $"{_statesBuilder.EnterStateMethodName}({_statesBuilder.StateFullTypeName}.{declaration.TargetState}, \"After: {declaration.Trigger}\");");
+                                }
+                            );
+                        }
                         break;
+
                     case TransitionType.InternalAfter:
                     case TransitionType.InternalAfterEvery:
                         _document.WriteConditionAndAction(transition);

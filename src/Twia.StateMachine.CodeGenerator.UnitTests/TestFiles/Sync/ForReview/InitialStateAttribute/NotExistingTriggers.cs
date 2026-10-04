@@ -2,11 +2,11 @@
 Name: Not existing Triggers
 Output: None
 Diagnostics:
-- SMG0010, 8, 25, "Trigger1", "State1"
-- SMG0010, 12, 25, "Trigger2", "State2"
+- SMG0010, 10, 25, "Trigger1", "State1"
+- SMG0010, 14, 25, "Trigger2", "State2"
 ---
 
-using Twia.StateMachine;
+#pragma warning disable CS1591
 
 namespace Twia.StateMachine.CodeGenerator.UnitTests;
 
