@@ -117,7 +117,7 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
-                __{{GeneratedId}}_StartTimer("00:01:00", null, __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1);
+                __{{GeneratedId}}_StartTimer(new global::System.TimeSpan(0, 0, 1, 0, 0), global::System.Threading.Timeout.InfiniteTimeSpan, __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1);
                 break;
 
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1:
@@ -125,16 +125,9 @@ public partial class UnitTestStateMachine
         }
     }
 
-    private void __{{GeneratedId}}_StartTimer(string delay, string? periode, __{{GeneratedId}}_Trigger trigger)
-    {
-        var delayTimeSpan = global::System.TimeSpan.Parse(delay);
-        var periodeTimeSpan = string.IsNullOrWhiteSpace(periode) ? global::System.Threading.Timeout.InfiniteTimeSpan : global::System.TimeSpan.Parse(periode);
-        var timer = new global::System.Threading.Timer(__{{GeneratedId}}_TimerCallback, trigger, delayTimeSpan, periodeTimeSpan);
-        __{{GeneratedId}}_Timers.Add(timer);
-    }
+    private void __{{GeneratedId}}_StartTimer(global::System.TimeSpan delay, global::System.TimeSpan periode, __{{GeneratedId}}_Trigger trigger)
+        => __{{GeneratedId}}_Timers.Add(new global::System.Threading.Timer(__{{GeneratedId}}_TimerCallback, trigger, delay, periode));
 
     private void __{{GeneratedId}}_TimerCallback(object? trigger)
-    {
-        __{{GeneratedId}}_InvokeTrigger((__{{GeneratedId}}_Trigger)trigger!);
-    }
+        => __{{GeneratedId}}_InvokeTrigger((__{{GeneratedId}}_Trigger)trigger!);
 }

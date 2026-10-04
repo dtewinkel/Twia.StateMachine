@@ -62,18 +62,16 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
     {
         var timerCallback = _classCommonBuilder.ToPrivateName("TimerCallback");
 
-        _document.WriteLine($"private void {_startTimerMethodName}(string delay, string? periode, {_triggersBuilder.TriggerEnumTypeName} trigger)");
-        _document.WriteLineBlockOpen();
-        _document.WriteLine("var delayTimeSpan = global::System.TimeSpan.Parse(delay);");
-        _document.WriteLine("var periodeTimeSpan = string.IsNullOrWhiteSpace(periode) ? global::System.Threading.Timeout.InfiniteTimeSpan : global::System.TimeSpan.Parse(periode);");
-        _document.WriteLine($"var timer = new global::System.Threading.Timer({timerCallback}, trigger, delayTimeSpan, periodeTimeSpan);");
-        _document.WriteLine($"{_timersBackingFieldName}.Add(timer);");
-        _document.WriteLineBlockClose();
+        _document.WriteLine($"private void {_startTimerMethodName}(global::System.TimeSpan delay, global::System.TimeSpan periode, {_triggersBuilder.TriggerEnumTypeName} trigger)");
+        _document.Indent++;
+        _document.WriteLine($"=> {_timersBackingFieldName}.Add(new global::System.Threading.Timer({timerCallback}, trigger, delay, periode));");
+        _document.Indent--;
         _document.WriteLineNoTabs();
         _document.WriteLine($"private void {timerCallback}(object? trigger)");
-        _document.WriteLineBlockOpen();
+        _document.Indent++;
+        _document.Write("=> ");
         _triggersBuilder.AddInvokeTrigger($"({_triggersBuilder.TriggerEnumTypeName})trigger!");
-        _document.WriteLineBlockClose();
+        _document.Indent--;
         return true;
     }
 
@@ -99,41 +97,62 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
         {
             foreach (var transition in transitions)
             {
-                var timeSpan = ParsePeriod(transition.Trigger);
+                if (!TryParsePeriod(transition.Trigger, out var timeSpan))
+                {
+                    // Handle invalid period format
+                    continue;
+                }
+
+                TimeSpan? initialDelay = null;
+                if (transition.TransitionType == TransitionType.InternalAfterEvery 
+                   && !string.IsNullOrWhiteSpace(((InternalAfterEveryDeclaration)transition).InitialDelay)
+                   && !TryParsePeriod(((InternalAfterEveryDeclaration)transition).InitialDelay, out initialDelay))
+                {
+                    // Handle invalid transition type for InternalAfterEvery
+                    continue;
+                }
 
                 switch (transition.TransitionType)
                 {
                     case TransitionType.AfterDelay:
                     case TransitionType.InternalAfter:
                         _document.WriteLine(
-                            $"{_startTimerMethodName}(\"{timeSpan}\", null, {ToFullyQualifiedAfterTriggerEnum(transition.Name)});");
+                            $"{_startTimerMethodName}({ToConstructor(timeSpan)}, {ToConstructor(null)}, {ToFullyQualifiedAfterTriggerEnum(transition.Name)});");
                         break;
 
                     case TransitionType.InternalAfterEvery:
-                        var initialDelay = ((InternalAfterEveryDeclaration)transition).InitialDelay;
-                        var initialTimeSpan = string.IsNullOrWhiteSpace(initialDelay) ? timeSpan.ToString() : ParsePeriod(initialDelay).ToString();
                         _document.WriteLine(
-                            $"{_startTimerMethodName}(\"{initialTimeSpan}\", \"{timeSpan}\", {ToFullyQualifiedAfterTriggerEnum(transition.Name)});");
+                            $"{_startTimerMethodName}({ToConstructor(initialDelay)}, {ToConstructor(timeSpan)}, {ToFullyQualifiedAfterTriggerEnum(transition.Name)});");
                         break;
                 }
             }
         }
     }
 
-    private static TimeSpan ParsePeriod(string trigger)
+    private static string ToConstructor(TimeSpan? timeSpan)
     {
-        if (TimeSpan.TryParse(trigger, out var timeSpan))
+        return timeSpan is null 
+            ? "global::System.Threading.Timeout.InfiniteTimeSpan" 
+            : $"new global::System.TimeSpan({timeSpan.Value.Days}, {timeSpan.Value.Hours}, {timeSpan.Value.Minutes}, {timeSpan.Value.Seconds}, {timeSpan.Value.Milliseconds})";
+    }
+
+    private static bool TryParsePeriod(string trigger, out TimeSpan? timeSpan)
+    {
+        if (TimeSpan.TryParse(trigger, out var ts))
         {
-            return timeSpan;
+            timeSpan = ts;
+            return true;
         }
 
         try
         {
-            return XmlConvert.ToTimeSpan(trigger);
+            timeSpan = XmlConvert.ToTimeSpan(trigger);
+            return true;
         }
         catch (FormatException)
         {
-            return TimeSpan.Zero;
+            timeSpan = TimeSpan.Zero;
+            return false;
         }
     }
 
