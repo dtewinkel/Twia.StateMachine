@@ -26,6 +26,7 @@ public partial class UnitTestStateMachine
         __{{GeneratedId}}_Undefined = 0,
         Trigger1,
         Trigger2,
+        Trigger3,
         __{{GeneratedId}}_Entry
     }
 
@@ -92,6 +93,13 @@ public partial class UnitTestStateMachine
         __{{GeneratedId}}_InvokeTrigger(__{{GeneratedId}}_Trigger.Trigger2);
     }
 
+    public partial void Trigger3()
+    {
+        __{{GeneratedId}}_AssertIsInitialized();
+
+        __{{GeneratedId}}_InvokeTrigger(__{{GeneratedId}}_Trigger.Trigger3);
+    }
+
     private void __{{GeneratedId}}_AssertIsInitialized()
     {
         if (!__{{GeneratedId}}_IsInitialized)
@@ -128,6 +136,10 @@ public partial class UnitTestStateMachine
         {
             case __{{GeneratedId}}_Trigger.Trigger1:
                 __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State2, "Trigger: Trigger1");
+                break;
+
+            case __{{GeneratedId}}_Trigger.Trigger3:
+                __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State1, "Trigger: Trigger3");
                 break;
         }
     }

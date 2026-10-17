@@ -12,6 +12,7 @@ public partial class UnitTestStateMachine
 {
     [InitialState]
     [Transition(nameof(Trigger1), nameof(State2))]
+    [Transition(nameof(Trigger3), nameof(State1))]
     private partial void State1();
 
     [State]
@@ -23,4 +24,7 @@ public partial class UnitTestStateMachine
 
     [Trigger]
     public partial void Trigger2();
+
+    [Trigger]
+    public partial void Trigger3();
 }

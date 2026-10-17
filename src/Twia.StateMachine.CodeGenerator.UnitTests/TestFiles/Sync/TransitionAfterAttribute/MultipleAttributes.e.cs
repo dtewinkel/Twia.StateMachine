@@ -26,6 +26,7 @@ public partial class UnitTestStateMachine
         __{{GeneratedId}}_Undefined = 0,
         __{{GeneratedId}}_Entry,
         __{{GeneratedId}}_State1After1,
+        __{{GeneratedId}}_State1After2,
         __{{GeneratedId}}_State2After1
     }
 
@@ -124,11 +125,19 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
-                __{{GeneratedId}}_StartTimer(new global::System.TimeSpan(0, 0, 1, 2, 0), global::System.Threading.Timeout.InfiniteTimeSpan, __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1);
+                __{{GeneratedId}}_StartTimer(new global::System.TimeSpan(0, 0, 1, 1, 0), global::System.Threading.Timeout.InfiniteTimeSpan, __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1);
+                __{{GeneratedId}}_StartTimer(new global::System.TimeSpan(0, 0, 1, 3, 0), global::System.Threading.Timeout.InfiniteTimeSpan, __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After2);
                 break;
 
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1:
-                __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State2, "After: 00:01:02");
+                if (CanTrigger)
+                {
+                    __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State2, "After: 00:01:01");
+                }
+                break;
+
+            case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After2:
+                __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State1, "After: 00:01:03");
                 break;
         }
     }

@@ -4,6 +4,7 @@
     <BuildType Name="Release" />
     <BuildType Name="Snapshots" />
   </Configurations>
+  <Folder Name="/scripts/" />
   <Folder Name="/Solution Items/">
     <File Path="../README.md" />
     <File Path="../.github/workflows/dotnet.yml" />
