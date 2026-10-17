@@ -126,7 +126,8 @@ public partial class UnitTestStateMachine
     {
         void OnExitState1()
         {
-            Work();
+            Work1();
+            Work2();
         }
 
         switch (__{{GeneratedId}}_LastTrigger)
@@ -142,7 +143,7 @@ public partial class UnitTestStateMachine
     {
         void OnExitState2()
         {
-            Work();
+            Work1();
         }
 
         switch (__{{GeneratedId}}_LastTrigger)

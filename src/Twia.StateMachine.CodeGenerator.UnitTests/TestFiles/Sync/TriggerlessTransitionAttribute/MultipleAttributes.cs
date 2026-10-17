@@ -11,7 +11,8 @@ namespace Twia.StateMachine.CodeGenerator.UnitTests;
 public partial class UnitTestStateMachine
 {
     [InitialState]
-    [TriggerlessTransition(nameof(State2))]
+    [TriggerlessTransition(nameof(State2), Condition = nameof(CanTrigger))]
+    [TriggerlessTransition(nameof(State3))]
     private partial void State1();
 
     [State]
@@ -20,4 +21,6 @@ public partial class UnitTestStateMachine
 
     [State]
     private partial void State3();
+
+    public bool CanTrigger => true;
 }

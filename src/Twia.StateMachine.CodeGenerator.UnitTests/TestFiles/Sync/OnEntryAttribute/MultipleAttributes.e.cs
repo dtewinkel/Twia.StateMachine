@@ -111,7 +111,8 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
-                Work();
+                Work1();
+                Work2();
                 break;
         }
     }
@@ -121,7 +122,7 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
-                Work();
+                Work1();
                 break;
         }
     }

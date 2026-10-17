@@ -26,6 +26,7 @@ public partial class UnitTestStateMachine
         __{{GeneratedId}}_Undefined = 0,
         __{{GeneratedId}}_Entry,
         __{{GeneratedId}}_State1After1,
+        __{{GeneratedId}}_State1After2,
         __{{GeneratedId}}_State2After1
     }
 
@@ -124,11 +125,16 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
-                __{{GeneratedId}}_StartTimer(new global::System.TimeSpan(0, 0, 1, 2, 0), new global::System.TimeSpan(0, 0, 1, 2, 0), __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1);
+                __{{GeneratedId}}_StartTimer(new global::System.TimeSpan(0, 0, 1, 1, 0), new global::System.TimeSpan(0, 0, 1, 1, 0), __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1);
+                __{{GeneratedId}}_StartTimer(new global::System.TimeSpan(0, 0, 1, 3, 0), new global::System.TimeSpan(0, 0, 1, 3, 0), __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After2);
                 break;
 
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1:
-                Work();
+                Work1();
+                break;
+
+            case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After2:
+                Work2();
                 break;
         }
     }
@@ -142,7 +148,7 @@ public partial class UnitTestStateMachine
                 break;
 
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State2After1:
-                Work();
+                Work1();
                 break;
         }
     }

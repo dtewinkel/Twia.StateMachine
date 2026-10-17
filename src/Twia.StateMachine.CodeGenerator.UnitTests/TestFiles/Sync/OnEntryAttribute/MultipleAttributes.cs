@@ -11,14 +11,20 @@ namespace Twia.StateMachine.CodeGenerator.UnitTests;
 public partial class UnitTestStateMachine
 {
     [InitialState]
-    [OnEntry("Work()")]
+    [OnEntry("Work1()")]
+    [OnEntry("Work2()")]
     private partial void State1();
 
     [State]
-    [OnEntry("Work()")]
+    [OnEntry("Work1()")]
     private partial void State2();
 
-    private void Work()
+    private void Work1()
+    {
+        // Do nothing
+    }
+
+    private void Work2()
     {
         // Do nothing
     }
