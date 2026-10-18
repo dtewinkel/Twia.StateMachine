@@ -98,7 +98,7 @@ public static class MethodReturnTypeDetector
         return UnwrapType(typeSyntax) switch
         {
             IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText == "Task",
-            GenericNameSyntax genericName => false, // Task<T> is not plain Task
+            GenericNameSyntax => false, // Task<T> is not plain Task
             QualifiedNameSyntax qualifiedName => IsTaskName(qualifiedName.Right),
             AliasQualifiedNameSyntax aliasQualifiedName => IsTaskName(aliasQualifiedName.Name),
             NullableTypeSyntax nullableType => IsTaskType(nullableType.ElementType),
@@ -198,7 +198,7 @@ public static class MethodReturnTypeDetector
 
         public override void VisitForEachStatement(ForEachStatementSyntax node)
         {
-            if (node.AwaitKeyword.Kind() != SyntaxKind.None)
+            if (node.AwaitKeyword.RawKind != (int)SyntaxKind.None)
             {
                 _containsAwait = true;
             }

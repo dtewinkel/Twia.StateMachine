@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Globalization;
+using System.Xml;
 using Twia.StateMachine.CodeGenerator.Declarations;
 
 namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
@@ -132,7 +133,7 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
     {
         return timeSpan is null 
             ? "global::System.Threading.Timeout.InfiniteTimeSpan" 
-            : $"new global::System.TimeSpan({timeSpan.Value.Days}, {timeSpan.Value.Hours}, {timeSpan.Value.Minutes}, {timeSpan.Value.Seconds}, {timeSpan.Value.Milliseconds})";
+            : $"new global::System.TimeSpan({timeSpan.Value.Ticks})";
     }
 
     private static bool TryParsePeriod(string trigger, out TimeSpan? timeSpan)
@@ -143,7 +144,7 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
             return false;
         }
 
-        if (TimeSpan.TryParse(trigger, out var ts))
+        if (TimeSpan.TryParse(trigger, CultureInfo.InvariantCulture, out var ts))
         {
             timeSpan = ts;
             return true;

@@ -13,6 +13,7 @@ public partial class SimpleStateMachine
 
     [OnEntry($"{nameof(OnEntryState1)}()", Condition = $"{nameof(IsConditionTrue)}()")]
     [Transition(nameof(Trigger1), nameof(State2))]
+    [TransitionAfter("0:00:12.8967345", nameof(State1))]
     [State, InitialState]
     private partial void State1();
 
