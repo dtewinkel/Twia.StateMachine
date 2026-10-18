@@ -62,9 +62,9 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
     {
         var timerCallback = _classCommonBuilder.ToPrivateName("TimerCallback");
 
-        _document.WriteLine($"private void {_startTimerMethodName}(global::System.TimeSpan delay, global::System.TimeSpan periode, {_triggersBuilder.TriggerEnumTypeName} trigger)");
+        _document.WriteLine($"private void {_startTimerMethodName}(global::System.TimeSpan delay, global::System.TimeSpan period, {_triggersBuilder.TriggerEnumTypeName} trigger)");
         _document.Indent++;
-        _document.WriteLine($"=> {_timersBackingFieldName}.Add(new global::System.Threading.Timer({timerCallback}, trigger, delay, periode));");
+        _document.WriteLine($"=> {_timersBackingFieldName}.Add(new global::System.Threading.Timer({timerCallback}, trigger, delay, period));");
         _document.Indent--;
         _document.WriteLineNoTabs();
         _document.WriteLine($"private void {timerCallback}(object? trigger)");
@@ -99,16 +99,15 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
             {
                 if (!TryParsePeriod(transition.Trigger, out var timeSpan))
                 {
-                    // Handle invalid period format
+                    // Ignore Transition with invalid After or Delay.
                     continue;
                 }
 
                 TimeSpan? initialDelay = null;
                 if (transition.TransitionType == TransitionType.InternalAfterEvery 
-                   && !string.IsNullOrWhiteSpace(((InternalAfterEveryDeclaration)transition).InitialDelay)
                    && !TryParsePeriod(((InternalAfterEveryDeclaration)transition).InitialDelay, out initialDelay))
                 {
-                    // Handle invalid transition type for InternalAfterEvery
+                    // Ignore InternalAfterEvery with invalid InitialDelay.
                     continue;
                 }
 
@@ -138,6 +137,12 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
 
     private static bool TryParsePeriod(string trigger, out TimeSpan? timeSpan)
     {
+        if(string.IsNullOrWhiteSpace(trigger))
+        {
+            timeSpan = null;
+            return false;
+        }
+
         if (TimeSpan.TryParse(trigger, out var ts))
         {
             timeSpan = ts;

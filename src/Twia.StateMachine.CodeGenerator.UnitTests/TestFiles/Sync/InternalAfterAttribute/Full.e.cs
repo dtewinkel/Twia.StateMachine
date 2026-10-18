@@ -196,8 +196,8 @@ public partial class UnitTestStateMachine
         }
     }
 
-    private void __{{GeneratedId}}_StartTimer(global::System.TimeSpan delay, global::System.TimeSpan periode, __{{GeneratedId}}_Trigger trigger)
-        => __{{GeneratedId}}_Timers.Add(new global::System.Threading.Timer(__{{GeneratedId}}_TimerCallback, trigger, delay, periode));
+    private void __{{GeneratedId}}_StartTimer(global::System.TimeSpan delay, global::System.TimeSpan period, __{{GeneratedId}}_Trigger trigger)
+        => __{{GeneratedId}}_Timers.Add(new global::System.Threading.Timer(__{{GeneratedId}}_TimerCallback, trigger, delay, period));
 
     private void __{{GeneratedId}}_TimerCallback(object? trigger)
         => __{{GeneratedId}}_InvokeTrigger((__{{GeneratedId}}_Trigger)trigger!);
