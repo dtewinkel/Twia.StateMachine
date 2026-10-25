@@ -19,8 +19,8 @@ public partial class StateMachineObservableTests
         [InitialState]
         [Transition(nameof(Trigger1), nameof(State1))]
         [Transition(nameof(Trigger2), nameof(State2))]
-        [Transition(nameof(Trigger3), nameof(State3), Condition = "Allowed == true")]
-        [TriggerlessTransition(nameof(State3), Condition = "TriggerlessAllowed == true")]
+        [Transition(nameof(Trigger3), nameof(State3), Condition = "Allowed")]
+        [TriggerlessTransition(nameof(State3), Condition = "TriggerlessAllowed")]
         private partial void State1();
 
         [State]

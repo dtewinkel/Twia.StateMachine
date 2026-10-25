@@ -56,7 +56,7 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
 
     public override bool AddFields()
     {
-        _document.WriteLine($"private global::System.Collections.Generic.List<global::System.Threading.Timer> {_timersBackingFieldName} = [];");
+        _document.WriteLine($"private global::System.Collections.Generic.List<global::System.Threading.ITimer> {_timersBackingFieldName} = [];");
         return true;
     }
     public override bool AddPrivateMethods()

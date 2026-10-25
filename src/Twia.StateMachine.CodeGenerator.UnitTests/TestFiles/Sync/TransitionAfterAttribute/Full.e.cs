@@ -42,7 +42,7 @@ public partial class UnitTestStateMachine
 
     private __{{GeneratedId}}_Trigger __{{GeneratedId}}_LastTrigger = __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Undefined;
 
-    private global::System.Collections.Generic.List<global::System.Threading.Timer> __{{GeneratedId}}_Timers = [];
+    private global::System.Collections.Generic.List<global::System.Threading.ITimer> __{{GeneratedId}}_Timers = [];
 
     /// <summary>
     /// Occurs when the state of the state machine changes.
