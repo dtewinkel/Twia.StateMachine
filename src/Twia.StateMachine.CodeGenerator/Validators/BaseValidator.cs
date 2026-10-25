@@ -1,4 +1,4 @@
-﻿using System.Xml;
+using System.Xml;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Twia.StateMachine.CodeGenerator.Declarations;
@@ -15,26 +15,19 @@ public class BaseValidator
             return declarationIsPartial;
         }
 
-        var initialStateIsValid = InitialStateIsValid(context, declaration);
-        var methodsAreStateOrTrigger = MethodsAreStateOrTrigger(context, declaration);
-        var methodsSignaturesAreCorrect = MethodsSignaturesAreCorrect(context, declaration);
-        var triggerNamesAreCorrect = TriggerNamesAreCorrect(context, declaration);
-        var afterTimeSpansAreCorrect = AfterTimeSpansAreCorrect(context, declaration);
-        var stateNamesAreCorrectNamesAreCorrect = StateNamesAreCorrect(context, declaration);
-        return declarationIsPartial; 
-               //&& initialStateIsValid 
-               //&& methodsAreStateOrTrigger 
-               //&& methodsSignaturesAreCorrect
-               //&& triggerNamesAreCorrect
-               //&& afterTimeSpansAreCorrect
-               //&& stateNamesAreCorrectNamesAreCorrect;
+        InitialStateIsValid(context, declaration);
+        MethodsAreStateOrTrigger(context, declaration);
+        MethodsSignaturesAreCorrect(context, declaration);
+        TriggerNamesAreCorrect(context, declaration);
+        AfterTimeSpansAreCorrect(context, declaration);
+        StateNamesAreCorrect(context, declaration);
+        return declarationIsPartial;
     }
 
-    protected virtual bool StateNamesAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
+    protected virtual void StateNamesAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
     {
         var states = declaration.Methods.Where(method => method.IsState).ToList();
         var stateNames = states.Select(method => method.Name).ToArray();
-        var success = true;
 
         foreach (var state in states)
         {
@@ -46,15 +39,12 @@ public class BaseValidator
                 if (!stateNames.Contains(targetState))
                 {
                     context.ReportDiagnostic(StateMachineGeneratorDiagnostics.StateMustBeDefined((MethodDeclarationSyntax)state.Node, targetState));
-                    success = false;
                 }
             }
         }
-
-        return success;
     }
 
-    protected virtual bool TriggerNamesAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
+    protected virtual void TriggerNamesAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
     {
         var triggerNames = declaration.Methods
             .Where(method => method.IsTrigger)
@@ -63,7 +53,6 @@ public class BaseValidator
 
         var states = declaration.Methods.Where(method => method.IsState);
 
-        var success = true;
         foreach (var state in states)
         {
             var transitions =
@@ -74,18 +63,14 @@ public class BaseValidator
                 if (!triggerNames.Contains(trigger))
                 {
                     context.ReportDiagnostic(StateMachineGeneratorDiagnostics.TriggerMustBeDefined((MethodDeclarationSyntax)state.Node, trigger));
-                    success = false;
                 }
             }
         }
-
-        return success;
     }
 
-    protected virtual bool AfterTimeSpansAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
+    protected virtual void AfterTimeSpansAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
     {
         var states = declaration.Methods.Where(method => method.IsState);
-        var success = true;
         foreach (var state in states)
         {
             var transitions =
@@ -100,8 +85,6 @@ public class BaseValidator
                 }
             }
         }
-
-        return success;
     }
 
     private static bool ValidatePeriod(string trigger)
@@ -131,52 +114,44 @@ public class BaseValidator
         return true;
     }
 
-    protected virtual bool MethodsAreStateOrTrigger(SourceProductionContext context, StateMachineDeclaration declaration)
+    protected virtual void MethodsAreStateOrTrigger(SourceProductionContext context, StateMachineDeclaration declaration)
     {
-        var success = true;
         foreach (var declarationMethod in declaration.Methods)
         {
             if (declarationMethod is { IsState: true, IsTrigger: true })
             {
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodCannotBeTriggerAndState((MethodDeclarationSyntax)declarationMethod.Node));
-                success = false;
             }
             if (declarationMethod is { IsState: false, IsTrigger: false, HasTransitions: true })
             {
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodMustBeAState((MethodDeclarationSyntax)declarationMethod.Node));
-                success = false;
             }
             if (declarationMethod is { IsTrigger: true, HasTransitions: true })
             {
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.TriggerCannotHaveStateAttributes((MethodDeclarationSyntax)declarationMethod.Node));
-                success = false;
             }
         }
-        return success;
     }
 
-    protected virtual bool MethodsSignaturesAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
+    protected virtual void MethodsSignaturesAreCorrect(SourceProductionContext context, StateMachineDeclaration declaration)
     {
-        var success = true;
         foreach (var declarationMethod in declaration.Methods)
         {
             if ((declarationMethod.IsState || declarationMethod.IsTrigger) && declarationMethod is { IsPartial: false })
             {
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MethodMustBePartial((MethodDeclarationSyntax)declarationMethod.Node));
-                success = false;
             }
         }
-        return success;
     }
 
-    protected virtual bool InitialStateIsValid(SourceProductionContext context, StateMachineDeclaration declaration)
+    protected virtual void InitialStateIsValid(SourceProductionContext context, StateMachineDeclaration declaration)
     {
         var initialStates = declaration.Methods.Where(method => method.IsInitial).ToArray();
         switch (initialStates.Length)
         {
             case 0:
                 context.ReportDiagnostic(StateMachineGeneratorDiagnostics.NoInitialStateDiagnostics((ClassDeclarationSyntax)declaration.Node));
-                return false;
+                break;
 
             case > 1:
             {
@@ -185,10 +160,8 @@ public class BaseValidator
                 {
                     context.ReportDiagnostic(StateMachineGeneratorDiagnostics.MultipleInitialStatesDiagnostics((MethodDeclarationSyntax)initialState.Node, initialStateName));
                 }
-                return false;
+                break;
             }
         }
-
-        return true;
     }
 }
