@@ -1,5 +1,4 @@
-﻿using System.Transactions;
-using Twia.StateMachine.CodeGenerator.Declarations;
+﻿using Twia.StateMachine.CodeGenerator.Declarations;
 
 namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
 

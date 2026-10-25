@@ -43,6 +43,4 @@ public sealed partial record StateMachineDeclaration : ClassDeclaration
     public bool StateAccessible { get; }
 
     public bool Observable { get; }
-
-    public MethodDeclaration GetMethod(string name) => Methods.First(methodDeclaration => methodDeclaration.Name == name);
 }

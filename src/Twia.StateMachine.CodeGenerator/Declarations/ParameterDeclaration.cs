@@ -18,6 +18,4 @@ public sealed partial record ParameterDeclaration : Declaration
     public string Modifiers { get; }
 
     public string ParameterType { get; }
-
-    public bool IsCancellationToken => ParameterType == CommonTypeNames.CancellationToken;
 }

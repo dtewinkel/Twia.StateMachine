@@ -45,8 +45,6 @@ public class StatesBuilder : BuilderBase
 
     public MethodDeclaration GetState(string stateName) => _states[stateName];
 
-    public bool TryGetState(string stateName, out MethodDeclaration? state) => _states.TryGetValue(stateName, out state);
-
     public bool StateExists(string stateName) => _states.ContainsKey(stateName);
 
     public override bool IsEnabled => true;

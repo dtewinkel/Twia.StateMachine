@@ -13,12 +13,6 @@ public class TriggerMethodsProvider : ITriggersProvider
 
     public bool TriggerExists(string triggerName) => Triggers.Any(trigger => trigger.Name == triggerName);
 
-    public bool TryGetTrigger(string triggerName, out MethodDeclaration? triggerMethod)
-    {
-        triggerMethod = Triggers.FirstOrDefault(trigger => trigger.Name == triggerName);
-        return triggerMethod is not null;
-    }
-
     /// <inheritdoc />
     public bool IsEnabled { get; }
 

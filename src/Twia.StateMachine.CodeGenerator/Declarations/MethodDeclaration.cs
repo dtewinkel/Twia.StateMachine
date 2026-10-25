@@ -89,6 +89,4 @@ public sealed partial record MethodDeclaration : Declaration
 
     [SequenceEquality]
     public List<TransitionDeclaration> Transitions { get; } = [];
-
-    public string? CancellationTokenParameterName => Parameters.FirstOrDefault(p => p.IsCancellationToken)?.Name;
 }

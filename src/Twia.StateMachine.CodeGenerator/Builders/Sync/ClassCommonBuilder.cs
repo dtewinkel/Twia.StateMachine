@@ -17,12 +17,7 @@ public class ClassCommonBuilder
 
     private readonly string _privatePrefix;
 
-
     public string StateMachineName { get; }
-
-    public string FullStateMachineTypeName { get; private set; } = "";
-
-
 
     public ClassCommonBuilder(CSharpDocumentWriter document, StateMachineDeclaration declaration)
     {
@@ -44,16 +39,12 @@ public class ClassCommonBuilder
 
     public void StartClass()
     {
-        var typeNameParts = new List<string>();
-
         AddHeader();
-        AddNamespace(typeNameParts);
+        AddNamespace();
 
-        AddParentClass(_declaration.Parent, typeNameParts);
+        AddParentClass(_declaration.Parent);
         _document.WriteLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{_generatorName}\", \"{_generatorVersion}\")]");
-        AddClassStart(_declaration, typeNameParts);
-         
-        FullStateMachineTypeName = string.Join(".", typeNameParts);
+        AddClassStart(_declaration);
     }
 
     private void AddHeader()
@@ -66,7 +57,7 @@ public class ClassCommonBuilder
         _document.WriteLineNoTabs();
     }
 
-    private void AddNamespace(List<string> typeNameParts)
+    private void AddNamespace()
     {
         var namespaceName = _declaration.FullNamespaceName;
         if (namespaceName is null)
@@ -76,10 +67,9 @@ public class ClassCommonBuilder
 
         _document.WriteLine($"namespace {namespaceName};");
         _document.WriteLineNoTabs();
-        typeNameParts.Add(namespaceName);
     }
 
-    private void AddParentClass(ParentDeclaration? parent, List<string> typeNameParts)
+    private void AddParentClass(ParentDeclaration? parent)
     {
         if (parent is not ContainingClassDeclaration containingClass)
         {
@@ -88,18 +78,17 @@ public class ClassCommonBuilder
 
         if (containingClass.Parent is not null)
         {
-            AddParentClass(containingClass.Parent, typeNameParts);
+            AddParentClass(containingClass.Parent);
         }
 
-        AddClassStart(containingClass.ClassDeclaration, typeNameParts);
+        AddClassStart(containingClass.ClassDeclaration);
     }
 
-    private void AddClassStart(ClassDeclaration declaration, List<string> typeNameParts)
+    private void AddClassStart(ClassDeclaration declaration)
     {
         _document.WriteLine($"{declaration.Modifiers} class {declaration.Name}");
         _document.WriteLineBlockOpen();
 
-        typeNameParts.Add(declaration.Name);
         _nestingLevel++;
     }
 

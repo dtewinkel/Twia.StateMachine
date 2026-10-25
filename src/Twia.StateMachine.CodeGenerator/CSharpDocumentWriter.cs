@@ -8,11 +8,6 @@ namespace Twia.StateMachine.CodeGenerator;
 public class CSharpDocumentWriter(int capacity = 10000)
     : IndentedTextWriter(new StringWriter(new StringBuilder(capacity), CultureInfo.InvariantCulture))
 {
-    public override string ToString()
-    {
-        return InnerWriter.ToString() ?? "";
-    }
-
     public void WriteLineBlockOpen()
     {
         WriteLine("{");
@@ -91,17 +86,6 @@ public class CSharpDocumentWriter(int capacity = 10000)
         }
     }
 
-    public void WriteMethod(string methodDeclaration, CSharpDocumentWriter methodBodyDocument)
-    {
-        WriteLine(methodDeclaration);
-        WriteLineBlockOpen();
-        foreach (var line in methodBodyDocument.ToString().Trim(methodBodyDocument.CoreNewLine).Split(methodBodyDocument.NewLine))
-        {
-            WriteLine(line);
-        }
-        WriteLineBlockClose();
-    }
-
     public void WriteConditionAndAction(TransitionDeclaration transitionDeclaration)
     {
         var condition = transitionDeclaration.Condition;
@@ -118,17 +102,5 @@ public class CSharpDocumentWriter(int capacity = 10000)
         {
             WriteLineBlockClose();
         }
-    }
-
-    public MethodReturnType GetMethodReturnType()
-    {
-        using var methodCode = new CSharpDocumentWriter();
-
-        methodCode.WriteLine("public void GetReturnType()");
-        methodCode.WriteLineBlockOpen();
-        methodCode.WriteLine(this);
-        methodCode.WriteLineBlockClose();
-
-        return MethodReturnTypeDetector.Detect(methodCode.ToString());
     }
 }
