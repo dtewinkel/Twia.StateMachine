@@ -15,6 +15,8 @@ public class BaseValidator
             return declarationIsPartial;
         }
 
+        // Validate and add diagnostics for the declaration and methods. Do not fail the generation if there are diagnostics,
+        // as we want to generate as much code as possible to prevent unnecessary other warnings and errors.
         InitialStateIsValid(context, declaration);
         MethodsAreStateOrTrigger(context, declaration);
         MethodsSignaturesAreCorrect(context, declaration);
