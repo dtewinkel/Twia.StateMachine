@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Xml;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -91,18 +92,19 @@ public class BaseValidator
 
     private static bool ValidatePeriod(string trigger)
     {
-        if (!TimeSpan.TryParse(trigger, out _))
+        if (TimeSpan.TryParse(trigger, CultureInfo.InvariantCulture, out var timeSpan))
         {
-            try
-            {
-                _ = XmlConvert.ToTimeSpan(trigger);
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
+            return timeSpan >= TimeSpan.Zero;
         }
-        return true;
+
+        try
+        {
+            return XmlConvert.ToTimeSpan(trigger) >= TimeSpan.Zero;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
     }
 
     protected virtual bool DeclarationIsPartial(SourceProductionContext context, StateMachineDeclaration declaration)

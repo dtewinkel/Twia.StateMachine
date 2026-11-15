@@ -23,7 +23,8 @@ public partial class UnitTestStateMachine
     {
         __{{GeneratedId}}_Undefined = 0,
         __{{GeneratedId}}_Entry,
-        __{{GeneratedId}}_State1After1
+        __{{GeneratedId}}_State1After1,
+        __{{GeneratedId}}_State1After2
     }
 
     private const UnitTestStateMachine.State __{{GeneratedId}}_StateUndefined = (UnitTestStateMachine.State)0;
@@ -121,6 +122,10 @@ public partial class UnitTestStateMachine
 
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1:
                 __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State1, "After: a");
+                break;
+
+            case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After2:
+                __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State1, "After: -00:00:02");
                 break;
         }
     }

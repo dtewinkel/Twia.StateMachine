@@ -147,13 +147,14 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
         if (TimeSpan.TryParse(trigger, CultureInfo.InvariantCulture, out var ts))
         {
             timeSpan = ts;
-            return true;
+            return ts >= TimeSpan.Zero;
         }
 
         try
         {
-            timeSpan = XmlConvert.ToTimeSpan(trigger);
-            return true;
+            var parsedTimeSpan = XmlConvert.ToTimeSpan(trigger);
+            timeSpan = parsedTimeSpan;
+            return parsedTimeSpan >= TimeSpan.Zero;
         }
         catch (FormatException)
         {
