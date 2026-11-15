@@ -1,5 +1,5 @@
 2.0.0:
-  - BRAKING CHANGE: Code generator is only supported on .NET SDKs that support source generators based on .NET 8.0 or later. 
+  - BRAKING CHANGE: Code generator is only supported on .NET SDKs that support source generators based on .NET 9.0 or later.
 
   - FIX: Add missing namespaces in generated code.
 
