@@ -78,6 +78,9 @@ internal class IncrementalGeneratorVerifier<TGenerator> : CSharpSourceGeneratorT
         _generatedSourcesPrefix = generatedSourcesPrefix;
         _generatedSourcesSuffix = generatedSourcesSuffix;
         _compilerDiagnostics = compilerDiagnostics;
+#if NET11_0
+        const string majorMinor = "11.0";
+#endif
 #if NET10_0
         const string majorMinor = "10.0";
 #endif
