@@ -3,9 +3,9 @@
 namespace Twia.StateMachine.CodeGenerator.Declarations;
 
 [Equatable]
-public partial record AfterDelayTransitionDeclaration : TransitionDeclaration
+public partial record TransitionAfterDeclaration : TransitionDeclaration
 {
-    public AfterDelayTransitionDeclaration(string stateName, int index, AttributeData attributeData)
+    public TransitionAfterDeclaration(string stateName, int index, AttributeData attributeData)
     {
         TransitionType = TransitionType.AfterDelay;
         Name = $"{stateName}After{index}";

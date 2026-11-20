@@ -218,6 +218,8 @@ The example shows that, when in state `Stopping`, on completion of the entry act
 
 #### Guard conditions
 
+`Condition` and `Action` snippets are compiled in the generated state-machine class, so they can reference its members, including private members. The generator uses `#line` directives to map compiler diagnostics for these snippets to the source line of the corresponding attribute argument, then restores the generated-file mapping. For multiline snippets, subsequent lines advance from that starting line; diagnostic columns refer to the generated code, not character positions inside the attribute string.
+
 ```csharp
 [StateMachine]
 public partial class MyStateMachine
@@ -295,6 +297,8 @@ public partial class MyStateMachine
     private partial void Running();
  }
 ```
+
+Period values used by `TransitionAfter`, `InternalAfter`, `InternalAfterEvery`, and their `InitialDelay` settings must be greater than zero and less than 32 days. Values may use invariant `TimeSpan` format (for example, `"0:00:05"`) or XML duration format (for example, `"PT5S"`). Zero, negative values, values of 32 days or more, and unparseable strings are invalid.
 
 Because internal transitions do not leave the state, their `OnExit` and `OnEntry` actions will not be executed.
 

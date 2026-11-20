@@ -82,28 +82,20 @@ public class BaseValidator
             {
                 var trigger = transitionDeclaration.Trigger;
 
-                if (!ValidatePeriod(trigger))
+                if (!trigger.TryParsePeriod(out _))
                 {
                     context.ReportDiagnostic(StateMachineGeneratorDiagnostics.TimeSpanMustBeValid((MethodDeclarationSyntax)state.Node, trigger));
                 }
+
+                if (transitionDeclaration.TransitionType is TransitionType.InternalAfterEvery)
+                {
+                    var initialDelay = ((InternalAfterEveryDeclaration)transitionDeclaration).InitialDelay;
+                    if (!string.IsNullOrWhiteSpace(initialDelay) && !initialDelay.TryParsePeriod(out _))
+                    {
+                        context.ReportDiagnostic(StateMachineGeneratorDiagnostics.TimeSpanMustBeValid((MethodDeclarationSyntax)state.Node, initialDelay));
+                    }
+                }
             }
-        }
-    }
-
-    private static bool ValidatePeriod(string trigger)
-    {
-        if (TimeSpan.TryParse(trigger, CultureInfo.InvariantCulture, out var timeSpan))
-        {
-            return timeSpan >= TimeSpan.Zero;
-        }
-
-        try
-        {
-            return XmlConvert.ToTimeSpan(trigger) >= TimeSpan.Zero;
-        }
-        catch (FormatException)
-        {
-            return false;
         }
     }
 

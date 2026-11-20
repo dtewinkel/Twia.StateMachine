@@ -23,6 +23,7 @@ public sealed partial record MethodDeclaration : Declaration
 
         foreach (var attributeData in attributes)
         {
+            var transitionCount = Transitions.Count;
             switch (attributeData.GetFullName())
             {
                 case StateMachineAttributeNames.OnEntryAttributeName:
@@ -38,7 +39,7 @@ public sealed partial record MethodDeclaration : Declaration
                     break;
 
                 case StateMachineAttributeNames.TransitionAfterAttributeName:
-                    Transitions.Add(new AfterDelayTransitionDeclaration(Name, index++, attributeData));
+                    Transitions.Add(new TransitionAfterDeclaration(Name, index++, attributeData));
                     break;
 
                 case StateMachineAttributeNames.TriggerlessTransitionAttributeName:
@@ -56,6 +57,11 @@ public sealed partial record MethodDeclaration : Declaration
                 case StateMachineAttributeNames.InternalAfterEveryAttributeName:
                     Transitions.Add(new InternalAfterEveryDeclaration(Name, index++, attributeData));
                     break;
+            }
+
+            if (Transitions.Count > transitionCount)
+            {
+                Transitions[^1].SetSourceLocations(attributeData);
             }
         }
 

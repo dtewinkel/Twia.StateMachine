@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using System.Xml;
-using Twia.StateMachine.CodeGenerator.Declarations;
+﻿using Twia.StateMachine.CodeGenerator.Declarations;
 
 namespace Twia.StateMachine.CodeGenerator.Builders.Sync;
 
@@ -98,17 +96,9 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
         {
             foreach (var transition in transitions)
             {
-                if (!TryParsePeriod(transition.Trigger, out var timeSpan))
+                if (!transition.Trigger.TryParsePeriod(out var timeSpan))
                 {
                     // Ignore Transition with invalid After or Delay.
-                    continue;
-                }
-
-                TimeSpan? initialDelay = null;
-                if (transition.TransitionType == TransitionType.InternalAfterEvery 
-                   && !TryParsePeriod(((InternalAfterEveryDeclaration)transition).InitialDelay, out initialDelay))
-                {
-                    // Ignore InternalAfterEvery with invalid InitialDelay.
                     continue;
                 }
 
@@ -121,6 +111,15 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
                         break;
 
                     case TransitionType.InternalAfterEvery:
+                        var initialDelayString =
+                            ((InternalAfterEveryDeclaration)transition).InitialDelay ?? transition.Trigger;
+
+                        if (!initialDelayString.TryParsePeriod(out var initialDelay))
+                        {
+                            // Ignore InternalAfterEvery with invalid InitialDelay.
+                            continue;
+                        }
+
                         _document.WriteLine(
                             $"{_startTimerMethodName}({ToConstructor(initialDelay)}, {ToConstructor(timeSpan)}, {ToFullyQualifiedAfterTriggerEnum(transition.Name)});");
                         break;
@@ -134,33 +133,6 @@ public class AfterTransitionsBuilder : BuilderBase, ITriggersProvider
         return timeSpan is null 
             ? "global::System.Threading.Timeout.InfiniteTimeSpan" 
             : $"new global::System.TimeSpan({timeSpan.Value.Ticks})";
-    }
-
-    private static bool TryParsePeriod(string trigger, out TimeSpan? timeSpan)
-    {
-        if(string.IsNullOrWhiteSpace(trigger))
-        {
-            timeSpan = null;
-            return false;
-        }
-
-        if (TimeSpan.TryParse(trigger, CultureInfo.InvariantCulture, out var ts))
-        {
-            timeSpan = ts;
-            return ts >= TimeSpan.Zero;
-        }
-
-        try
-        {
-            var parsedTimeSpan = XmlConvert.ToTimeSpan(trigger);
-            timeSpan = parsedTimeSpan;
-            return parsedTimeSpan >= TimeSpan.Zero;
-        }
-        catch (FormatException)
-        {
-            timeSpan = TimeSpan.Zero;
-            return false;
-        }
     }
 
     public void AddTimerTransitions(string stateName, bool first, string? onExitCall)

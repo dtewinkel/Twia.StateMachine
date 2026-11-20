@@ -5,7 +5,7 @@ namespace Twia.StateMachine.CodeGenerator.Declarations;
 [Equatable]
 public partial record InternalAfterEveryDeclaration : TransitionDeclaration
 {
-    public string InitialDelay { get; protected set; } = null!;
+    public string? InitialDelay { get; }
     
     public InternalAfterEveryDeclaration(string stateName, int index, AttributeData attributeData)
     {
@@ -15,6 +15,6 @@ public partial record InternalAfterEveryDeclaration : TransitionDeclaration
         TargetState = "self";
         Action = attributeData.ConstructorArguments[1].Value?.ToString() ?? "";
         Condition = attributeData.NamedArguments.FirstOrDefault(kv => kv.Key == "Condition").Value.Value?.ToString();
-        InitialDelay = attributeData.NamedArguments.FirstOrDefault(kv => kv.Key == "InitialDelay").Value.Value?.ToString() ?? Trigger;
+        InitialDelay = attributeData.NamedArguments.FirstOrDefault(kv => kv.Key == "InitialDelay").Value.Value?.ToString();
     }
 }

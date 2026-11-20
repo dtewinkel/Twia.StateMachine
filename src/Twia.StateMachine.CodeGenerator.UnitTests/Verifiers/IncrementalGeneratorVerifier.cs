@@ -153,6 +153,8 @@ internal class IncrementalGeneratorVerifier<TGenerator> : CSharpSourceGeneratorT
                 preparedDocument = verificationPreparer.Prepare(preparedDocument, actualGeneratedSource, Verify);
             }
 
+            // Source mappings are verified separately; these snapshots cover generated executable code.
+            //var comparisonSource = Regex.Replace(actualGeneratedSource, @"(?m)^#line [^\r\n]*(?:\r?\n|$)", "");
             var diffText = new StringBuilder();
             var diff = InlineDiffBuilder.Diff(preparedDocument, actualGeneratedSource, ignoreWhiteSpace: false);
             if (diff.HasDifferences)

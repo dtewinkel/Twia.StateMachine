@@ -108,7 +108,7 @@ public static class StateMachineGeneratorDiagnostics
     private static readonly DiagnosticDescriptor _timeSpanMustBeValidDescriptor = new(
         "SMG0012",
         "TimeSpan value must be valid",
-        "The time span '{0}' used for state method '{1}' must be be a valid TimeSpan parsable value",
+        "The time span '{0}' used for state method '{1}' must be be a valid TimeSpan parsable value and within the range of > 0 days and < 32 days",
         "Generator",
         DiagnosticSeverity.Error,
         true,

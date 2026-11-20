@@ -1,5 +1,5 @@
 ---
-Name: 'SMG0012 - Invalid initial Period for InternalAfterEveryAttribute'
+Name: 'SMG0012 - Invalid Initial Delay for InternalAfterEveryAttribute'
 Output: Source
 Diagnostics:
 - SMG0012, 10, 26, "a", "State1"
@@ -13,7 +13,7 @@ namespace Twia.StateMachine.CodeGenerator.UnitTests;
 public partial class UnitTestStateMachine
 {
     [InitialState]
-    [InternalAfterEvery("a", "Work()", InitialDelay = "b")]
+    [InternalAfterEvery("PT1M", "Work()", InitialDelay = "a")]
     private partial void State1();
 
     private void Work()

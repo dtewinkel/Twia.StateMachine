@@ -63,7 +63,7 @@ public class CSharpDocumentWriter(int capacity = 10000)
 
         if (hasCondition)
         {
-            WriteLine($"if ({condition})");
+            WriteMappedLine($"if ({condition})", transitionDeclaration.ConditionSource);
             WriteLineBlockOpen();
         }
 
@@ -74,7 +74,7 @@ public class CSharpDocumentWriter(int capacity = 10000)
 
         if (hasAction)
         {
-            WriteLine($"{action};");
+            WriteMappedLine($"{action};", transitionDeclaration.ActionSource);
             WriteLineNoTabs();
         }
 
@@ -94,13 +94,29 @@ public class CSharpDocumentWriter(int capacity = 10000)
 
         if (hasCondition)
         {
-            WriteLine($"if ({condition})");
+            WriteMappedLine($"if ({condition})", transitionDeclaration.ConditionSource);
             WriteLineBlockOpen();
         }
-        WriteLine($"{action};");
+        WriteMappedLine($"{action};", transitionDeclaration.ActionSource);
         if (hasCondition)
         {
             WriteLineBlockClose();
+        }
+    }
+
+    private void WriteMappedLine(string text, SnippetSourceLocation? source)
+    {
+        if (source is not null)
+        {
+            // Unlike C# string literals, #line filenames preserve backslashes literally.
+            WriteLineNoTabs($"#line {source.Line.ToString(CultureInfo.InvariantCulture)} \"{source.Path}\"");
+        }
+
+        WriteLine(text);
+
+        if (source is not null)
+        {
+            WriteLineNoTabs("#line default");
         }
     }
 }
