@@ -131,13 +131,21 @@ public partial class UnitTestStateMachine
     {
         void OnExitState1()
         {
+#line 9 "/0/Test0.cs"
             if (Condition1)
+#line default
             {
+#line 9 "/0/Test0.cs"
                 Action1();
+#line default
             }
+#line 10 "/0/Test0.cs"
             if (Condition2)
+#line default
             {
+#line 10 "/0/Test0.cs"
                 Action2();
+#line default
             }
         }
 
@@ -154,11 +162,17 @@ public partial class UnitTestStateMachine
     {
         void OnExitState2()
         {
+#line 15 "/0/Test0.cs"
             if (Condition2)
+#line default
             {
+#line 15 "/0/Test0.cs"
                 Action1();
+#line default
             }
+#line 16 "/0/Test0.cs"
             Action2();
+#line default
         }
 
         switch (__{{GeneratedId}}_LastTrigger)
@@ -174,7 +188,9 @@ public partial class UnitTestStateMachine
     {
         void OnExitState3()
         {
+#line 21 "/0/Test0.cs"
             Action1();
+#line default
         }
 
         switch (__{{GeneratedId}}_LastTrigger)

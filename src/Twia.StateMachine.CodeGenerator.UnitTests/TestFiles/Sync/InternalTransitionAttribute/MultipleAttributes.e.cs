@@ -135,11 +135,15 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.Trigger1:
+#line 9 "/0/Test0.cs"
                 Work1();
+#line default
                 break;
 
             case __{{GeneratedId}}_Trigger.Trigger3:
+#line 10 "/0/Test0.cs"
                 Work2();
+#line default
                 break;
         }
     }
@@ -149,7 +153,9 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.Trigger2:
+#line 14 "/0/Test0.cs"
                 Work1();
+#line default
                 break;
         }
     }

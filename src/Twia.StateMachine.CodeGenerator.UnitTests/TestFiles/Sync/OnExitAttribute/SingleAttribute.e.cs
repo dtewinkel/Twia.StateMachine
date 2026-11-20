@@ -112,7 +112,9 @@ public partial class UnitTestStateMachine
     {
         void OnExitState1()
         {
+#line 9 "/0/Test0.cs"
             Work();
+#line default
         }
 
         switch (__{{GeneratedId}}_LastTrigger)

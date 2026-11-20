@@ -140,16 +140,24 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.Trigger1:
+#line 9 "/0/Test0.cs"
                 if (Condition1)
+#line default
                 {
+#line 9 "/0/Test0.cs"
                     Action1();
+#line default
                 }
                 break;
 
             case __{{GeneratedId}}_Trigger.Trigger2:
+#line 10 "/0/Test0.cs"
                 if (Condition2)
+#line default
                 {
+#line 10 "/0/Test0.cs"
                     Action2();
+#line default
                 }
                 break;
         }
@@ -160,14 +168,20 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.Trigger1:
+#line 14 "/0/Test0.cs"
                 if (Condition2)
+#line default
                 {
+#line 14 "/0/Test0.cs"
                     Action1();
+#line default
                 }
                 break;
 
             case __{{GeneratedId}}_Trigger.Trigger2:
+#line 15 "/0/Test0.cs"
                 Action2();
+#line default
                 break;
         }
     }
@@ -177,7 +191,9 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.Trigger1:
+#line 19 "/0/Test0.cs"
                 Action1();
+#line default
                 break;
         }
     }

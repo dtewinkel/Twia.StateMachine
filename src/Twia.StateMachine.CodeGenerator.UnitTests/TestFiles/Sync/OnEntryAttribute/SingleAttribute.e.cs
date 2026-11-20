@@ -105,7 +105,9 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
+#line 9 "/0/Test0.cs"
                 Work();
+#line default
                 break;
         }
     }

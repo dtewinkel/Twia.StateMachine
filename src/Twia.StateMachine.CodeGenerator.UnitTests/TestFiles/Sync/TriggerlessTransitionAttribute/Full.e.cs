@@ -124,15 +124,23 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
+#line 9 "/0/Test0.cs"
                 if (Condition1)
+#line default
                 {
+#line 9 "/0/Test0.cs"
                     Action1();
+#line default
 
                     __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State2, "Triggerless");
                 }
+#line 10 "/0/Test0.cs"
                 if (Condition2)
+#line default
                 {
+#line 10 "/0/Test0.cs"
                     Action2();
+#line default
 
                     __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State3, "Triggerless");
                 }
@@ -145,11 +153,15 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
+#line 14 "/0/Test0.cs"
                 if (Condition2)
+#line default
                 {
                     __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State1, "Triggerless");
                 }
+#line 15 "/0/Test0.cs"
                 Action2();
+#line default
 
                 __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State3, "Triggerless");
                 break;

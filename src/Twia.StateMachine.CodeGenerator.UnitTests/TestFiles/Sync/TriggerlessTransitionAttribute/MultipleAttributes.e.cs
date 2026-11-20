@@ -117,7 +117,9 @@ public partial class UnitTestStateMachine
         switch (__{{GeneratedId}}_LastTrigger)
         {
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_Entry:
+#line 9 "/0/Test0.cs"
                 if (CanTrigger)
+#line default
                 {
                     __{{GeneratedId}}_EnterState(UnitTestStateMachine.State.State2, "Triggerless");
                 }

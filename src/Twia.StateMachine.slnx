@@ -4,7 +4,9 @@
     <BuildType Name="Release" />
     <BuildType Name="Snapshots" />
   </Configurations>
-  <Folder Name="/scripts/" />
+  <Folder Name="/scripts/">
+    <File Path="../scripts/New-ExpectedResult.ps1" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path="../README.md" />
     <File Path="../.github/workflows/dotnet.yml" />

@@ -120,7 +120,9 @@ public partial class UnitTestStateMachine
                 break;
 
             case __{{GeneratedId}}_Trigger.__{{GeneratedId}}_State1After1:
+#line 9 "/0/Test0.cs"
                 Work();
+#line default
                 break;
         }
     }
