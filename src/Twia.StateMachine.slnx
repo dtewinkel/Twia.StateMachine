@@ -4,6 +4,10 @@
     <BuildType Name="Release" />
     <BuildType Name="Snapshots" />
   </Configurations>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path="../.github/workflows/dotnet.yml" />
+  </Folder>
   <Folder Name="/scripts/">
     <File Path="../scripts/New-ExpectedResult.ps1" />
   </Folder>
