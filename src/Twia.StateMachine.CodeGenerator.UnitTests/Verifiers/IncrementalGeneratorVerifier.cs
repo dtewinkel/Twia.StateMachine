@@ -84,9 +84,6 @@ internal class IncrementalGeneratorVerifier<TGenerator> : CSharpSourceGeneratorT
 #if NET10_0
         const string majorMinor = "10.0";
 #endif
-#if NET9_0
-        const string majorMinor = "9.0";
-#endif
         TestState.ReferenceAssemblies = new ReferenceAssemblies(
             $"net{majorMinor}",
             new PackageIdentity(

@@ -1,6 +1,10 @@
 2.0.0:
-  - BRAKING CHANGE: Code generator is only supported on .NET SDKs that support source generators based on .NET 9.0 or later.
-
+  - BREAKING CHANGE: Dropped .NET 8.0 and .NET 9.0 target frameworks. The library now targets .NET 10.0 and .NET 11.0.
+  - BREAKING CHANGE: The code generator requires the .NET 10.0 SDK or later.
+  - ADD: Support for .NET 11.0.
+  - ADD: Triggerless transitions and internal transitions, including delayed and recurring transitions.
+  - ADD: ISO 8601 duration strings for transition timing.
+  - FIX: Improved validation of state-machine declarations and transition periods, including negative time spans.
   - FIX: Add missing namespaces in generated code.
 
 1.1.0:
